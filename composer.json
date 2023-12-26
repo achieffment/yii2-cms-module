@@ -1,0 +1,12 @@
+{
+    "name": "chieff/yii2-cms-module",
+    "description": "CMS module for Yii 2",
+    "autoload": {
+        "psr-4": {
+            "chieff\\modules\\Cms\\": ""
+        }
+    },
+    "require": {
+
+    }
+}
