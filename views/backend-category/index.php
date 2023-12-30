@@ -265,7 +265,13 @@ foreach ($backPath as $path) {
                                     if ($categoryId) {
                                         $params['categoryId'] = $categoryId;
                                     }
-                                    return Html::a(\rmrevin\yii\fontawesome\FAS::icon('trash'), $params, ['data-pjax' => 0]);
+                                    return Html::a(\rmrevin\yii\fontawesome\FAS::icon('trash'), $params, [
+                                        'data' => [
+                                            'confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
+                                            'method' => 'post',
+                                        ],
+                                        'data-pjax' => 0,
+                                    ]);
                                 },
                             ]
                         ],

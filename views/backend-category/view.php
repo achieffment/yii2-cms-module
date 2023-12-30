@@ -22,10 +22,20 @@ foreach ($backPath as $path) {
     <h2 class="lte-hide-title"><?= $this->title ?></h2>
     <div class="panel panel-default">
         <p>
-            <?= Html::a(CmsModule::t('back', 'Create'), ['create'], ['class' => 'btn btn-sm btn-success']) ?>
-            <?= Html::a(CmsModule::t('back', 'Edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-sm btn-primary']) ?>
-            <?= Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->id], [
-                'class' => 'btn btn-sm btn-danger pull-right',
+            <?
+            $paramsCreate = ['create'];
+            $paramsUpdate = ['update', 'id' => $model->id];
+            $paramsDelete = ['delete', 'id' => $model->id];
+            if ($categoryId) {
+                $paramsCreate['categoryId'] = $categoryId;
+                $paramsUpdate['categoryId'] = $categoryId;
+                $paramsDelete['categoryId'] = $categoryId;
+            }
+            ?>
+            <?= Html::a(CmsModule::t('back', 'Create'), $paramsCreate, ['class' => 'btn btn-success']) ?>
+            <?= Html::a(CmsModule::t('back', 'Edit'), $paramsUpdate, ['class' => 'btn btn-primary']) ?>
+            <?= Html::a(Yii::t('yii', 'Delete'), $paramsDelete, [
+                'class' => 'btn btn-danger pull-right',
                 'data' => [
                     'confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                     'method' => 'post',

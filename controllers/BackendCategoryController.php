@@ -109,7 +109,7 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
 
         }
 
-        return $this->renderIsAjax('create', compact('model', 'backPath', 'backLink'));
+        return $this->renderIsAjax('create', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
     public function actionUpdate($id, $categoryId = null)
@@ -154,7 +154,7 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
             $model->parent_id_field = $model->parentId;
 
         }
-        return $this->renderIsAjax('update', compact('model', 'backPath', 'backLink'));
+        return $this->renderIsAjax('update', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
     public function actionDelete($id, $categoryId = null)
@@ -180,7 +180,7 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
 
-        return $this->renderIsAjax('view', compact('model', 'backPath', 'backLink'));
+        return $this->renderIsAjax('view', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
     public function actionBulkDelete()
