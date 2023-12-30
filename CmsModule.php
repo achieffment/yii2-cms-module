@@ -7,6 +7,18 @@ use Yii;
 class CmsModule extends \yii\base\Module
 {
 
+    public $imagesPath = '@webroot/uploads/pages/';
+
+    public $imagesPathRelative = '/backend/uploads/pages/';
+
+    public $imagesCategoriesPath = '@webroot/uploads/categories/';
+
+    public $imagesCategoriesPathRelative = '/backend/uploads/categories/';
+
+    public $page_table = '{{%page}}';
+    
+    public $category_table = '{{%category}}';
+
     public $controllerNamespace = 'chieff\modules\Cms\controllers';
 
     /**
@@ -42,4 +54,26 @@ class CmsModule extends \yii\base\Module
         }
         return Yii::t('modules/cms/' . $category, $message, $params, $language);
     }
+
+    public static function buildBackendMenu()
+    {
+        return
+        [
+            [
+                'label' => static::t('back', 'CMS'),
+                'url' => ['/cms/backend/'],
+                'items' => [
+                    [
+                        'label' => static::t('back', 'Pages'),
+                        'url' => ['/cms/backend-page/'],
+                    ],
+                    [
+                        'label' => static::t('back', 'Categories'),
+                        'url' => ['/cms/backend-category/']
+                    ]
+                ]
+            ]
+        ];
+    }
+
 }
