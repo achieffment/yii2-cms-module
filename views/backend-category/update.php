@@ -13,6 +13,7 @@ $this->title = CmsModule::t('back', 'Editing category: ') . ' ' . $model->name;
 foreach ($backPath as $path) {
     $this->params['breadcrumbs'][] = $path;
 }
+$this->params['breadcrumbs'][] = ['label' => $model->name];
 
 ?>
 <h2 class="lte-hide-title"><?= $this->title ?></h2>

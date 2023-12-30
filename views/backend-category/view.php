@@ -16,6 +16,7 @@ $this->title = $model->name;
 foreach ($backPath as $path) {
     $this->params['breadcrumbs'][] = $path;
 }
+$this->params['breadcrumbs'][] = ['label' => $model->name];
 
 ?>
 <div class="user-view">
