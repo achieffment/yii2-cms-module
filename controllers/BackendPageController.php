@@ -18,6 +18,8 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
         $model = new $this->modelClass;
         if ($this->scenarioOnCreate) {
             $model->scenario = $this->scenarioOnCreate;
+        } else {
+            $model->scenario = 'page';
         }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
@@ -40,6 +42,8 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
         $model = $this->findModel($id);
         if ($this->scenarioOnUpdate) {
             $model->scenario = $this->scenarioOnUpdate;
+        } else {
+            $model->scenario = 'page';
         }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {

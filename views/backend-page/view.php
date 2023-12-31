@@ -20,10 +20,10 @@ $this->params['breadcrumbs'][] = $this->title;
     <h2 class="lte-hide-title"><?= $this->title ?></h2>
     <div class="panel panel-default">
         <p>
-            <?= Html::a(CmsModule::t('back', 'Create'), ['create'], ['class' => 'btn btn-sm btn-success']) ?>
-            <?= Html::a(CmsModule::t('back', 'Edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-sm btn-primary']) ?>
+            <?= Html::a(CmsModule::t('back', 'Create'), ['create'], ['class' => 'btn btn-success']) ?>
+            <?= Html::a(CmsModule::t('back', 'Edit'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
             <?= Html::a(Yii::t('yii', 'Delete'), ['delete', 'id' => $model->id], [
-                'class' => 'btn btn-sm btn-danger pull-right',
+                'class' => 'btn btn-danger pull-right',
                 'data' => [
                     'confirm' => Yii::t('yii', 'Are you sure you want to delete this item?'),
                     'method' => 'post',
@@ -38,6 +38,16 @@ $this->params['breadcrumbs'][] = $this->title;
                     'active_from:datetime',
                     'active_to:datetime',
                     'sort',
+                    [
+                        'attribute' => 'category_id',
+                        'value' => function($model) {
+                            $category = $model->category;
+                            if ($category) {
+                                return Html::a($category->name, ['/cms/backend-category/view', 'id' => $category->id, 'categoryId' => $category->parentId], ['data-pjax' => 0]);
+                            }
+                        },
+                        'format' => 'raw'
+                    ],
                     'name',
                     'slug',
                     'menutitle',

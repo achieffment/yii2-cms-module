@@ -20,29 +20,29 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
     {
         $modelClass = $this->modelClass;
 
+        $model = null;
+
         $query = $modelClass::find();
         $queryParams = [];
-        $model = null;
         if ($categoryId) {
             $model = $this->findModel(['id' => $categoryId]);
-            if ($model->isRoot()) {
-                $queryParams = [
-                    'tree' => $model->id,
-                    'depth' => $model->depth + 1
-                ];
-            } else {
-                $parentId = $model->parentId;
-                $queryParams = [
-                    'tree' => $parentId,
-                    'depth' => $model->depth + 1
-                ];
-            }
+            $queryParams = [
+                'tree' => $model->tree,
+                'depth' => $model->depth + 1,
+            ];
+            $query->where($queryParams);
+            $query->andWhere([
+                '>=', 'lft', $model->lft
+            ]);
+            $query->andWhere([
+                '<=', 'rgt', $model->rgt
+            ]);
         } else {
             $queryParams = [
                 'depth' => 0
             ];
+            $query->where($queryParams);
         }
-        $query->where($queryParams);
 
         $backPath = $this->getBackPath($categoryId);
         $backLink = $this->getBackLink($categoryId);
@@ -157,23 +157,6 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
         return $this->renderIsAjax('update', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
-    public function actionDelete($id, $categoryId = null)
-    {
-        $model = $this->findModel($id);
-
-        $result = $model->deleteWithChildren();
-
-        $redirect = false;
-        if ($result) {
-            $redirect = $this->getRedirectPage('delete', $model);
-            if ($redirect !== false && $categoryId) {
-                $redirect['categoryId'] = $categoryId;
-            }
-        }
-
-        return $redirect === false ? '' : $this->redirect($redirect);
-    }
-
     public function actionView($id, $categoryId = null) {
         $model = $this->findModel($id);
 
@@ -183,6 +166,26 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
         return $this->renderIsAjax('view', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
+    public function actionDelete($id, $categoryId = null)
+    {
+        $model = $this->findModel($id);
+
+        $result = $model->deleteWithChildrenExtended();
+        if ($result === false) {
+            Yii::$app->session->setFlash('error', "Can not delete");
+        }
+
+        $redirect = false;
+        if ($result !== false) {
+            $redirect = $this->getRedirectPage('delete', $model);
+            if ($redirect !== false && $categoryId) {
+                $redirect['categoryId'] = $categoryId;
+            }
+        }
+
+        return $redirect === false ? '' : $this->redirect($redirect);
+    }
+
     public function actionBulkDelete()
     {
         if (Yii::$app->request->post('selection')) {
@@ -190,7 +193,9 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
             foreach (Yii::$app->request->post('selection', []) as $id) {
                 $model = $modelClass::findOne($id);
                 if ($model) {
-                    $model->deleteWithChildren();
+                    if ($model->deleteWithChildrenExtended() === false) {
+                        Yii::$app->session->setFlash('error', "Can not delete");
+                    }
                 }
             }
         }

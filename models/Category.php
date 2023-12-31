@@ -4,8 +4,10 @@ namespace chieff\modules\Cms\models;
 
 use creocoder\nestedsets\NestedSetsBehavior;
 
+use chieff\modules\Cms\models\Page;
 use chieff\modules\Cms\components\CategoryQuery;
 
+use yii\db\Query;
 use yii\helpers\ArrayHelper;
 
 use Yii;
@@ -78,6 +80,59 @@ class Category extends \chieff\modules\Cms\models\Page
         ]);
     }
 
+    public function beforeDelete()
+    {
+        $pages = $this->pages;
+        if ($pages) {
+            foreach ($pages as $page) {
+                if ($page->delete() === false) {
+                    return false;
+                }
+            }
+        }
+
+        return parent::beforeDelete();
+    }
+
+    /**
+     * Extended version of deleteWithChildren function of NestedSetsBehavior
+     * Standart function don't fires beforeDelete and afterDelete event on each category that makes problems
+     * @return bool
+     */
+    public function deleteWithChildrenExtended()
+    {
+        $query = self::find()
+            ->where([
+                'tree' => $this->tree
+            ])
+            ->andWhere([
+                '>=', 'lft', $this->lft
+            ])
+            ->andWhere([
+                '<=', 'rgt', $this->rgt
+            ])->orderBy([
+                'depth' => SORT_DESC,
+            ])
+            ->all();
+
+        if ($query) {
+            foreach ($query as $category) {
+                if ($category->isRoot()) {
+                    if ($category->deleteWithChildren() === false) {
+                        return false;
+                    } else {
+                        continue;
+                    }
+                }
+                if ($category->delete() === false) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Get parent's ID
      * @return \yii\db\ActiveQuery
@@ -120,6 +175,21 @@ class Category extends \chieff\modules\Cms\models\Page
             $return[$row->id] = str_repeat('-', $row->depth) . ' ' . $row->name;
 
         return $return;
+    }
+
+    /**
+     * prevent error from extended page method
+     *
+     * @return null
+     */
+    public function getCategory()
+    {
+        return null;
+    }
+
+    public function getPages()
+    {
+        return $this->hasMany(Page::className(), ['category_id' => 'id']);
     }
 
 }

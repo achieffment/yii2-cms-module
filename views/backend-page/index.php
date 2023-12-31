@@ -105,6 +105,16 @@ $this->params['breadcrumbs'][] = $this->title;
                         ],
                         'sort',
                         [
+                            'attribute' => 'category_id',
+                            'value' => function($model) {
+                                $category = $model->category;
+                                if ($category) {
+                                    return Html::a($category->name, ['/cms/backend-category/view', 'id' => $category->id, 'categoryId' => $category->parentId], ['data-pjax' => 0]);
+                                }
+                            },
+                            'format' => 'raw'
+                        ],
+                        [
                             'attribute' => 'name',
                             'value' => function($model) {
                                 return Html::a($model->name . ' ' . \rmrevin\yii\fontawesome\FAS::icon('edit'), ['update', 'id' => $model->id], ['data-pjax' => 0]);

@@ -16,21 +16,13 @@ class CategorySearch extends \chieff\modules\Cms\models\search\PageSearch
     {
         $query->joinWith(['createdBy', 'updatedBy']);
 
-        /*
-        $query->joinWith(['user']);
-        // Don't let non-superadmin view superadmin activity
-        if (!Yii::$app->user->isSuperadmin) {
-            $query->andWhere([User::tableName() . '.superadmin' => 0]);
-        }
-        */
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
                 'pageSize' => Yii::$app->request->cookies->getValue('_grid_page_size', 20),
             ],
             'sort' => [
-                'defaultOrder' => ['id' => SORT_DESC],
+                'defaultOrder' => ['sort' => SORT_ASC],
             ],
         ]);
 

@@ -6,9 +6,10 @@ use kartik\switchinput\SwitchInput;
 use kartik\datetime\DateTimePicker;
 use kartik\file\FileInput;
 
+use chieff\modules\Cms\models\Category;
+
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
-
 use yii\helpers\Url;
 use Yii;
 
@@ -30,6 +31,8 @@ use Yii;
     'layout' => 'horizontal',
     'validateOnBlur' => false,
 ]) ?>
+
+    <?= $form->field($model, 'category_id')->dropDownList(Category::getTree(), ['prompt' => 'No Category']) ?>
 
     <?= $form->field($model, 'active')->widget(SwitchInput::classname(), []) ?>
 

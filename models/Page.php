@@ -4,6 +4,8 @@ namespace chieff\modules\Cms\models;
 
 use webvimark\modules\UserManagement\models\User;
 
+use chieff\modules\Cms\models\Category;
+
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\web\UploadedFile;
@@ -33,6 +35,7 @@ use Yii;
  * @property int|null $updated_at
  * @property int|null $created_by
  * @property int|null $updated_by
+ * @property int|null $category_id
  */
 class Page extends \yii\db\ActiveRecord
 {
@@ -78,6 +81,8 @@ class Page extends \yii\db\ActiveRecord
             ['slug', 'unique'],
             ['slug', 'validateSlug'],
             [['active', 'sort', 'menuhide', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
+            ['category_id', 'integer', 'on' => 'page'],
+            ['category_id', 'validateCategoryId', 'on' => 'page'],
             [['active_from', 'active_to'], 'validateDate'],
             [['name', 'menutitle', 'h1', 'title'], 'string', 'max' => 250],
             [['description', 'preview_text'], 'string', 'max' => 500],
@@ -116,6 +121,7 @@ class Page extends \yii\db\ActiveRecord
             'updated_at' => 'Updated At',
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
+            'category_id' => 'Category Id',
             'preview_image_file' => 'Preview Image File',
             'detail_image_file' => 'Detail Image File'
         ];
@@ -134,6 +140,16 @@ class Page extends \yii\db\ActiveRecord
             $date = strtotime($this->$attribute);
             if ($date === false) {
                 $this->addError($attribute, 'Incorrect date');
+            }
+        }
+    }
+
+    public function validateCategoryId()
+    {
+        if ($this->category_id) {
+            $category = Category::findOne($this->category_id);
+            if ($category === null) {
+                $this->addError('category_id', 'Incorrect category');
             }
         }
     }
@@ -302,6 +318,11 @@ class Page extends \yii\db\ActiveRecord
             }
         }
         return false;
+    }
+
+    public function getCategory()
+    {
+        return $this->hasOne(Category::className(), ['id' => 'category_id']);
     }
 
 }
