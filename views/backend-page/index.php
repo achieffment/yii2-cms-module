@@ -9,6 +9,8 @@ use webvimark\extensions\DateRangePicker\DateRangePicker;
 
 use kartik\switchinput\SwitchInput;
 
+use chieff\modules\Cms\models\Category;
+
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\helpers\ArrayHelper;
@@ -106,6 +108,12 @@ $this->params['breadcrumbs'][] = $this->title;
                         'sort',
                         [
                             'attribute' => 'category_id',
+                            'filter' => Html::activeDropDownList(
+                                $searchModel,
+                                'category_id',
+                                Category::getTree(),
+                                ['class' => 'form-control', 'prompt' => 'Все']
+                            ),
                             'value' => function($model) {
                                 $category = $model->category;
                                 if ($category) {

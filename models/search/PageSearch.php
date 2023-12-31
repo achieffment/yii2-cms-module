@@ -15,7 +15,7 @@ class PageSearch extends Page
     public function rules()
     {
         return [
-            [['id', 'sort'], 'integer'],
+            [['id', 'sort', 'category_id'], 'integer'],
             [['active', 'menuhide'], 'boolean'],
             [['slug', 'preview_text', 'detail_text'], 'string'],
             [['created_at', 'updated_at', 'created_by', 'updated_by'], 'safe'],
@@ -33,14 +33,6 @@ class PageSearch extends Page
         $query = Page::find();
         $query->joinWith(['createdBy', 'updatedBy']);
 
-        /*
-        $query->joinWith(['user']);
-        // Don't let non-superadmin view superadmin activity
-        if (!Yii::$app->user->isSuperadmin) {
-            $query->andWhere([User::tableName() . '.superadmin' => 0]);
-        }
-        */
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
             'pagination' => [
@@ -57,6 +49,7 @@ class PageSearch extends Page
 
         $query->andFilterWhere(['active' => $this->active]);
         $query->andFilterWhere(['sort' => $this->sort]);
+        $query->andFilterWhere(['category_id' => $this->category_id]);
         $query->andFilterWhere(['like', 'name', $this->name]);
         $query->andFilterWhere(['like', 'slug', $this->slug]);
         $query->andFilterWhere(['menuhide' => $this->menuhide]);

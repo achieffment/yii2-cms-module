@@ -123,7 +123,7 @@ class Page extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
             'category_id' => 'Category Id',
             'preview_image_file' => 'Preview Image File',
-            'detail_image_file' => 'Detail Image File'
+            'detail_image_file' => 'Detail Image File',
         ];
     }
 
