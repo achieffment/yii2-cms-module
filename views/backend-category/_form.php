@@ -80,8 +80,13 @@ use Yii;
     ?>
     <?= $form->field($model, 'preview_image_file')->widget(FileInput::classname(), [
         'options' => ['accept' => 'image/*', 'multiple' => false],
-        'pluginOptions' => $previewImage
+        'pluginOptions' => $previewImage,
+        'pluginEvents' => [
+            "fileclear" => "function() { document.querySelector('#category-preview_image_hidden').value = ''; }",
+            "filereset" => "function() { document.querySelector('#category-preview_image_hidden').value = ''; }",
+        ]
     ]); ?>
+    <?= $form->field($model, 'preview_image_hidden')->hiddenInput()->label(false) ?>
 
     <?= $form->field($model, 'preview_text')->widget(\dosamigos\tinymce\TinyMce::className(), [
         'clientOptions' => [
@@ -127,8 +132,13 @@ use Yii;
     ?>
     <?= $form->field($model, 'detail_image_file')->widget(FileInput::classname(), [
         'options' => ['accept' => 'image/*', 'multiple' => false],
-        'pluginOptions' => $detailImage
+        'pluginOptions' => $detailImage,
+        'pluginEvents' => [
+            "fileclear" => "function() { document.querySelector('#category-detail_image_hidden').value = ''; }",
+            "filereset" => "function() { document.querySelector('#category-detail_image_hidden').value = ''; }",
+        ]
     ]); ?>
+    <?= $form->field($model, 'detail_image_hidden')->hiddenInput()->label(false) ?>
 
     <?= $form->field($model, 'detail_text')->widget(\dosamigos\tinymce\TinyMce::className(), [
         'clientOptions' => [

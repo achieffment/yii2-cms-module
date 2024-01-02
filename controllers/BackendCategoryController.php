@@ -65,12 +65,9 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
         if ($this->scenarioOnCreate) {
             $model->scenario = $this->scenarioOnCreate;
         }
-
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
-
         if ($model->load(Yii::$app->request->post())) {
-
             $result = false;
             if ($model->parent_id_field) {
                 $parent = Category::findOne($model->parent_id_field);
@@ -78,37 +75,30 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
             } else {
                 $result = $model->makeRoot();
             }
-
             if ($result && $model->save()) {
                 if ($model->imageUploadComplex()) {
-
                     $redirect = $this->getRedirectPage('create', $model);
                     if ($redirect !== false && $categoryId) {
                         $redirect['categoryId'] = $categoryId;
                     }
-
                     return $redirect === false ? '' : $this->redirect($redirect);
                 } else {
-
-                    Yii::$app->session->setFlash('error', "Не удалось загрузить изображение");
+                    if (!Yii::$app->session->getFlash('error')) {
+                        Yii::$app->session->setFlash('error', CmsModule::t('back', 'Unknown error on uploading images'));
+                    }
                     $params = ['update', 'id' => $model->id];
                     if ($categoryId) {
                         $params['categoryId'] = $categoryId;
                     }
-
                     return $this->redirect($categoryId);
                 }
             }
-
         } else {
-
             $model->loadDefaultValues();
             if ($categoryId) {
                 $model->parent_id_field = $categoryId;
             }
-
         }
-
         return $this->renderIsAjax('create', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
@@ -118,13 +108,10 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
         if ($this->scenarioOnUpdate) {
             $model->scenario = $this->scenarioOnUpdate;
         }
-
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
-
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
-
                 if (empty($model->parent_id_field)) {
                     if (!$model->isRoot())
                         $model->makeRoot();
@@ -134,47 +121,40 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
                         $model->appendTo($parent);
                     }
                 }
-
                 if ($model->imageUploadComplex()) {
-
                     $redirect = $this->getRedirectPage('update', $model);
                     if ($redirect !== false && $categoryId) {
                         $redirect['categoryId'] = $categoryId;
                     }
-
                     return $redirect === false ? '' : $this->redirect($redirect);
                 } else {
-                    Yii::$app->session->setFlash('error', "Не удалось загрузить изображение");
+                    if (!Yii::$app->session->getFlash('error')) {
+                        Yii::$app->session->setFlash('error', CmsModule::t('back', 'Unknown error on uploading images'));
+                    }
                 }
-
             }
-
         } else {
-
             $model->parent_id_field = $model->parentId;
-
+            $model->preview_image_hidden = $model->preview_image;
+            $model->detail_image_hidden = $model->detail_image;
         }
         return $this->renderIsAjax('update', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
     public function actionView($id, $categoryId = null) {
         $model = $this->findModel($id);
-
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
-
         return $this->renderIsAjax('view', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
     public function actionDelete($id, $categoryId = null)
     {
         $model = $this->findModel($id);
-
         $result = $model->deleteWithChildrenExtended();
         if ($result === false) {
             Yii::$app->session->setFlash('error', "Can not delete");
         }
-
         $redirect = false;
         if ($result !== false) {
             $redirect = $this->getRedirectPage('delete', $model);
@@ -182,7 +162,6 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
                 $redirect['categoryId'] = $categoryId;
             }
         }
-
         return $redirect === false ? '' : $this->redirect($redirect);
     }
 

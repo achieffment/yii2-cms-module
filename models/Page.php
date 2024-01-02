@@ -2,6 +2,7 @@
 
 namespace chieff\modules\Cms\models;
 
+use chieff\modules\Cms\CmsModule;
 use webvimark\modules\UserManagement\models\User;
 
 use chieff\modules\Cms\models\Category;
@@ -49,7 +50,10 @@ class Page extends \yii\db\ActiveRecord
     const MENU_STATUS_HIDDEN = 1;
 
     public $preview_image_file;
+    public $preview_image_hidden;
+
     public $detail_image_file;
+    public $detail_image_hidden;
 
     /**
      * {@inheritdoc}
@@ -86,7 +90,7 @@ class Page extends \yii\db\ActiveRecord
             [['active_from', 'active_to'], 'validateDate'],
             [['name', 'menutitle', 'h1', 'title'], 'string', 'max' => 250],
             [['description', 'preview_text'], 'string', 'max' => 500],
-            [['slug', 'preview_image', 'detail_image'], 'string', 'max' => 100],
+            [['slug', 'preview_image', 'detail_image', 'preview_image_hidden', 'detail_image_hidden'], 'string', 'max' => 100],
             [['detail_text'], 'string', 'max' => 5000],
             ['active', 'default', 'value' => 1],
             ['sort', 'default', 'value' => 500],
@@ -123,7 +127,9 @@ class Page extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
             'category_id' => 'Category Id',
             'preview_image_file' => 'Preview Image File',
+            'preview_image_hidden' => 'Preview Image',
             'detail_image_file' => 'Detail Image File',
+            'preview_image_file' => 'Preview Image',
         ];
     }
 
@@ -181,11 +187,14 @@ class Page extends \yii\db\ActiveRecord
 
     public function beforeDelete()
     {
-        if (!$this->deleteImage('preview_image'))
+        if (!$this->deleteImage('preview_image')) {
+            Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not delete preview image'));
             return false;
-        if (!$this->deleteImage('detail_image'))
+        }
+        if (!$this->deleteImage('detail_image')) {
+            Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not delete preview image'));
             return false;
-
+        }
         return parent::beforeDelete();
     }
 
@@ -240,6 +249,7 @@ class Page extends \yii\db\ActiveRecord
         $path = $this->preparePath();
         if (!is_dir($path)) {
             if (!mkdir($path, 0777, true)) {
+                Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not create directory'));
                 return '';
             }
         }
@@ -256,6 +266,8 @@ class Page extends \yii\db\ActiveRecord
                 $file_path = $path . $file_name;
                 if ($this->$attribute_file->saveAs($file_path)) {
                     return $file_name;
+                } else {
+                    Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not save image'));
                 }
             }
         }
@@ -265,8 +277,42 @@ class Page extends \yii\db\ActiveRecord
 
     public function imageUploadComplex()
     {
+        $prevPreview = $this->preview_image;
+
         $this->preview_image = $this->imageUpload($this->id, 'preview_image', $this->preview_image);
+
+        if (Yii::$app->session->getFlash('error')) {
+            return false;
+        }
+
+        // if hidden field is empty and current preview is equal previos, it means that we are deleting image
+        if (
+            !$this->preview_image_hidden &&
+            ($this->preview_image == $prevPreview)
+        ) {
+            if (!$this->deleteImage('preview_image')) {
+                Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not delete preview image'));
+                return false;
+            }
+            $this->preview_image = '';
+        }
+
+        $prevDetail = $this->detail_image;
+
         $this->detail_image = $this->imageUpload($this->id, 'detail_image', $this->detail_image);
+
+        // if hidden field is empty and current preview is equal previos, it means that we are deleting image
+        if (
+            !$this->detail_image_hidden &&
+            ($this->detail_image == $prevDetail)
+        ) {
+            if (!$this->deleteImage('detail_image')) {
+                Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not delete detail image'));
+                return false;
+            }
+            $this->detail_image = '';
+        }
+
         return $this->save();
     }
 

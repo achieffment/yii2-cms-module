@@ -2,6 +2,8 @@
 
 namespace chieff\modules\Cms\controllers;
 
+use chieff\modules\Cms\CmsModule;
+
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use Yii;
@@ -27,7 +29,9 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
                     $redirect = $this->getRedirectPage('create', $model);
                     return $redirect === false ? '' : $this->redirect($redirect);
                 } else {
-                    Yii::$app->session->setFlash('error', "Не удалось загрузить изображение");
+                    if (!Yii::$app->session->getFlash('error')) {
+                        Yii::$app->session->setFlash('error', CmsModule::t('back', 'Unknown error on uploading images'));
+                    }
                     return $this->redirect(['update', 'id' => $model->id]);
                 }
             }
@@ -51,9 +55,14 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
                     $redirect = $this->getRedirectPage('update', $model);
                     return $redirect === false ? '' : $this->redirect($redirect);
                 } else {
-                    Yii::$app->session->setFlash('error', "Не удалось загрузить изображение");
+                    if (!Yii::$app->session->getFlash('error')) {
+                        Yii::$app->session->setFlash('error', CmsModule::t('back', 'Unknown error on uploading images'));
+                    }
                 }
             }
+        } else {
+            $model->preview_image_hidden = $model->preview_image;
+            $model->detail_image_hidden = $model->detail_image;
         }
         return $this->renderIsAjax('update', compact('model'));
     }
