@@ -6,6 +6,7 @@ use chieff\modules\Cms\CmsModule;
 use webvimark\modules\UserManagement\models\User;
 
 use chieff\modules\Cms\models\Category;
+use chieff\helpers\SecurityHelper;
 
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
@@ -233,6 +234,11 @@ class Page extends \yii\db\ActiveRecord
 
     public function getImage($attribute)
     {
+        if (Yii::$app->getModule('cms')->imageEncode) {
+            $path = $this->preparePath() . $this->$attribute;
+            return SecurityHelper::getImageContent($path, true, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+        }
+
         if (static::TYPE == 'page') {
             $path = Yii::$app->getModule('cms')->imagesPathRelative;
         } else if (static::TYPE == 'category') {
@@ -265,9 +271,41 @@ class Page extends \yii\db\ActiveRecord
                 $file_name = $file_name . $id . '_' . $attribute .  '.' . $this->$attribute_file->getExtension();
                 $file_path = $path . $file_name;
                 if ($this->$attribute_file->saveAs($file_path)) {
+
+                    // encoding image if needed
+                    if (
+                        Yii::$app->getModule('cms')->imageEncode &&
+                        (($data = file_get_contents($file_path)) !== false)
+                    ) {
+                        $data = SecurityHelper::encode($data, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+                        if ($data) {
+                            if (file_put_contents($file_path, $data) !== false) {
+                                // ok
+                            } else {
+                                Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not save encoded data to file'));
+                                if (!unlink($file_path)) {
+                                    Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not save encoded data to file and delete file after try'));
+                                }
+                                return '';
+                            }
+                        } else {
+                            Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not encode file data'));
+                            if (!unlink($file_path)) {
+                                Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not encode file data and delete file after try'));
+                            }
+                            return '';
+                        }
+                    } else if (
+                        Yii::$app->getModule('cms')->imageEncode
+                    ) {
+                        Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not read file or file not exists, file not encoded'));
+                        return '';
+                    }
+
                     return $file_name;
                 } else {
                     Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not save image'));
+                    return '';
                 }
             }
         }
@@ -288,7 +326,7 @@ class Page extends \yii\db\ActiveRecord
         // if hidden field is empty and current preview is equal previos, it means that we are deleting image
         if (
             !$this->preview_image_hidden &&
-            ($this->preview_image == $prevPreview)
+            !$this->preview_image_file
         ) {
             if (!$this->deleteImage('preview_image')) {
                 Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not delete preview image'));
@@ -304,7 +342,7 @@ class Page extends \yii\db\ActiveRecord
         // if hidden field is empty and current detail is equal previos, it means that we are deleting image
         if (
             !$this->detail_image_hidden &&
-            ($this->detail_image == $prevDetail)
+            !$this->detail_image_file
         ) {
             if (!$this->deleteImage('detail_image')) {
                 Yii::$app->session->setFlash('error', CmsModule::t('back', 'Can not delete detail image'));

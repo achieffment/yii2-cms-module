@@ -24,6 +24,34 @@ class CmsModule extends \yii\base\Module
     
     public $category_table = '{{%category}}';
 
+    /**
+     * If set true, images will be encoded
+     *
+     * @var bool
+     */
+    public $imageEncode = false;
+
+    /**
+     * If set true, data will be encoded
+     *
+     * @var array
+     */
+    public $dataEncode = false;
+
+    /**
+     * If set true, migration will create special table
+     *
+     * @var array
+     */
+    public $dataEncodeMigration = true;
+
+    /**
+     * Secure passphrase for encoding
+     *
+     * @var string
+     */
+    public $passphrase = '';
+
     public $controllerNamespace = 'chieff\modules\Cms\controllers';
 
     /**
