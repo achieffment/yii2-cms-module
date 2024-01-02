@@ -19,3 +19,13 @@ Routes
     ]
 ]
 ```
+
+Migrations
+```
+./yii migrate --migrationPath=vendor/chieff/yii2-cms-module/migrations/
+```
+
+If you want delete tables later and didn't migrate another tables, use:
+```
+./yii migrate/down 2 --migrationPath=vendor/chieff/yii2-cms-module/migrations/
+```

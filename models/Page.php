@@ -81,7 +81,7 @@ class Page extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'slug', 'menutitle', 'h1', 'title', 'description', 'preview_text', 'detail_text'], 'trim'],
-            [['name', 'slug'], 'required'],
+            [['name', 'slug', 'active', 'menuhide'], 'required'],
             ['slug', 'unique'],
             ['slug', 'validateSlug'],
             [['active', 'sort', 'menuhide', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
