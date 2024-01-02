@@ -39,25 +39,25 @@ use Yii;
 
     <?= $form->field($model, 'active_from')->widget(DateTimePicker::classname(), [
         'options' => [
-            'value' => $model->active_from ? (is_numeric($model->active_from) ? date('d-m-Y H:i', $model->active_from) : $model->active_from) : null,
+            'value' => $model->active_from ? (is_numeric($model->active_from) ? date('d-n-Y H:i', $model->active_from) : $model->active_from) : null,
         ],
         'pluginOptions' => [
             'todayBtn' => true,
             'todayHighlight' => true,
             'autoclose' => true,
-            'format' => 'dd-m-yyyy HH:ii',
+            'format' => 'dd-m-yyyy hh:ii',
         ]
     ]); ?>
 
     <?= $form->field($model, 'active_to')->widget(DateTimePicker::classname(), [
         'options' => [
-            'value' => $model->active_to ? (is_numeric($model->active_to) ? date('d-m-Y H:i', $model->active_to) : $model->active_to) : null,
+            'value' => $model->active_to ? (is_numeric($model->active_to) ? date('d-n-Y H:i', $model->active_to) : $model->active_to) : null,
         ],
         'pluginOptions' => [
             'todayBtn' => true,
             'todayHighlight' => true,
             'autoclose' => true,
-            'format' => 'dd-m-yyyy HH:ii',
+            'format' => 'dd-m-yyyy hh:ii',
             'startDate' => date('d-m-Y H:i'),
         ]
     ]); ?>

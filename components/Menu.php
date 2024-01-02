@@ -42,6 +42,14 @@ class Menu extends Component {
                 'menuhide' => Category::MENU_STATUS_ACTIVE,
                 'depth' => 0
             ])
+            // active from must be less than current time if category shall be visible
+            // active to must be more than current time if category shall be visible
+            ->andWhere(
+                '(`active_from` IS NULL AND `active_to` IS NULL) ' .
+                'OR (`active_from` IS NOT NULL AND `active_to` IS NULL AND `active_from` <= ' . time() . ') ' .
+                'OR (`active_from` IS NULL AND `active_to` IS NOT NULL AND `active_to` >= ' . time() . ') ' .
+                'OR (`active_from` IS NOT NULL AND `active_to` IS NOT NULL AND `active_from` <= ' . time() . ' AND `active_to` >= ' . time() . ')'
+            )
             ->orderBy(['sort' => SORT_ASC])
             ->all();
         if ($result) {
@@ -89,6 +97,14 @@ class Menu extends Component {
                     'tree' => $item->tree,
                     'depth' => $curLevel
                 ])
+                // active from must be less than current time if category shall be visible
+                // active to must be more than current time if category shall be visible
+                ->andWhere(
+                    '(`active_from` IS NULL AND `active_to` IS NULL) ' .
+                    'OR (`active_from` IS NOT NULL AND `active_to` IS NULL AND `active_from` <= ' . time() . ') ' .
+                    'OR (`active_from` IS NULL AND `active_to` IS NOT NULL AND `active_to` >= ' . time() . ') ' .
+                    'OR (`active_from` IS NOT NULL AND `active_to` IS NOT NULL AND `active_from` <= ' . time() . ' AND `active_to` >= ' . time() . ')'
+                )
                 ->andWhere(['>=', 'lft', $item->lft])
                 ->andWhere(['<=', 'rgt', $item->rgt])
                 ->orderBy(['sort' => SORT_ASC])
