@@ -31,7 +31,7 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
     <h1><?= $h1 ?></h1>
     <p class="badge badge-secondary mb-1" style="width: fit-content"><?= $date ?></p>
     <? if ($imageDetail): ?>
-        <img class="img-fluid mt-4 mb-4" src="<?= $imageDetail ?>" loading="lazy">
+        <img class="img-fluid mt-4 mb-4" src="<?= $imageDetail ?>" loading="lazy" style="object-fit: contain; object-position: left; max-height: 300px">
     <? endif; ?>
     <? if ($model->detail_text): ?>
         <div>
@@ -54,10 +54,10 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
             $name = $page->menutitle ? $page->menutitle : $page->name;
             ?>
             <div class="col-3">
-                <div class="p-3 d-flex flex-column bg-light rounded h-100">
-                    <a class="h-100" href="/page/<?= $page->slug ?>">
+                <div class="p-3 bg-light rounded h-100">
+                    <a class="d-flex flex-column h-100" href="/page/<?= $page->slug ?>">
                         <? if ($pageImagePreview || $pageImageDetail): ?>
-                            <img class="img-fluid" src="<?= $pageImagePreview ? $subCategoryImagePreview : $pageImageDetail ?>" loading="lazy">
+                            <img class="img-fluid" src="<?= $pageImagePreview ? $pageImagePreview : $pageImageDetail ?>" loading="lazy">
                         <? endif; ?>
                         <p class="badge badge-secondary mb-1" style="width: fit-content"><?= $pageDate ?></p>
                         <p class="mb-0"><?= $name ?></p>
@@ -91,8 +91,8 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
             }
             ?>
             <div class="col-3">
-                <div class="p-3 d-flex flex-column bg-light rounded h-100">
-                    <a class="h-100" href="/category/<?= $subCategory->slug ?>">
+                <div class="p-3 bg-light rounded h-100">
+                    <a class="d-flex flex-column h-100" href="/category/<?= $subCategory->slug ?>">
                         <? if ($subCategoryImagePreview || $subCategoryImageDetail): ?>
                             <img class="img-fluid" src="<?= $subCategoryImagePreview ? $subCategoryImagePreview : $subCategoryImageDetail ?>" loading="lazy">
                         <? endif; ?>

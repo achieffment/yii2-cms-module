@@ -168,8 +168,8 @@ class Category extends \chieff\modules\Cms\models\Page
     {
         return self::find()
             ->where([
-                'active' => Category::STATUS_ACTIVE,
-                'menuhide' => Category::MENU_STATUS_ACTIVE,
+                'active' => self::STATUS_ACTIVE,
+                'menuhide' => self::MENU_STATUS_ACTIVE,
                 'tree' => $this->tree,
                 'depth' => $this->depth,
             ])
