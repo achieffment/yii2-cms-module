@@ -294,9 +294,15 @@ class Page extends \yii\db\ActiveRecord
             if (substr($path, 0, 1) != '/') {
                 $path = '/' . $path;
             }
+            if (substr($path, -1, 1)) {
+                $path = $path . '/';
+            }
             $path = $_SERVER['DOCUMENT_ROOT'] . $path;
         } else {
             $path = Yii::getAlias($path);
+            if (substr($path, -1, 1)) {
+                $path = $path . '/';
+            }
         }
         return $path;
     }

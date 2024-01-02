@@ -7,7 +7,7 @@ use chieff\modules\Cms\models\Category;
 use yii\web\NotFoundHttpException;
 use Yii;
 
-class FrontendPageController extends \yii\web\Controller
+class FrontendCategoryController extends \yii\web\Controller
 {
 
     public function behaviors()
@@ -21,9 +21,12 @@ class FrontendPageController extends \yii\web\Controller
 
     public function actionView($slug)
     {
-        $page = Category::findOne(['slug' => $slug]);
-        if (!$page) {
-            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+        $category = Category::findOne(['slug' => $slug]);
+        if (!$category) {
+            throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
+        }
+        if (!$category->categoryActivity) {
+            throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
         }
         return $this->render('view', compact('category'));
     }

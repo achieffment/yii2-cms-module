@@ -25,6 +25,9 @@ class FrontendPageController extends \yii\web\Controller
         if (!$page) {
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
+        if (!$page->pageActivity) {
+            throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
+        }
         return $this->render('view', compact('page'));
     }
 
