@@ -246,7 +246,7 @@ class Category extends \chieff\modules\Cms\models\Page
 
     public function getPages()
     {
-        return $this->hasMany(Page::className(), ['category_id' => 'id']);
+        return $this->hasMany(Page::className(), ['category_id' => 'id'])->orderBy(['sort' => SORT_ASC]);
     }
 
     public function getPagesActive($menuhide = false)

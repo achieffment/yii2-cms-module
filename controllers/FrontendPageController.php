@@ -44,9 +44,7 @@ class FrontendPageController extends \yii\web\Controller
 
     public function getBackPath($category, $parents, $page)
     {
-        $path = [
-            ['label' => CmsModule::t('back', 'Index'), 'url' => '/']
-        ];
+        $path = [];
         if ($parents) {
             foreach ($parents as $parent) {
                 $path[] = [
