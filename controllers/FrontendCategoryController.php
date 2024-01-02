@@ -26,7 +26,7 @@ class FrontendCategoryController extends \yii\web\Controller
         if (!$model) {
             throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
         }
-        if (!$model->categoryActivity) {
+        if (!$model->activity) {
             throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
         }
 

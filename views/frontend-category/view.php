@@ -41,7 +41,7 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
 
 <? if ($pages): ?>
     <div class="row mb-3">
-        <h2 class="col-12 mb-3">Страницы</h2>
+        <h2 class="col-12 mb-3"><?= CmsModule::t('back', 'Pages') ?></h2>
         <?
         foreach ($pages as $page) {
             $pageDate = $page->active_from ? $page->active_from : $page->created_at;
@@ -72,7 +72,7 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
 
 <? if ($subCategories): ?>
     <div class="row">
-        <h2 class="col-12 mb-3">Другие разделы</h2>
+        <h2 class="col-12 mb-3"><?= CmsModule::t('back', 'Sections') ?></h2>
         <?
         foreach ($subCategories as $subCategory) {
             $subCategoryDate = $subCategory->active_from ? $subCategory->active_from : $subCategory->created_at;
