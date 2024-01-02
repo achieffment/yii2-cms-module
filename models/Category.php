@@ -177,6 +177,54 @@ class Category extends \chieff\modules\Cms\models\Page
         return $return;
     }
 
+    public function getCategoryActivity()
+    {
+        // check cur category
+        if (
+            $this->active_from && !$this->active_to && time() < $this->active_from
+        ) {
+            return false;
+        } else if (
+            !$this->active_from && $this->active_to && time() > $this->active_to
+        ) {
+            return false;
+        } else if (
+            ($this->active_from && $this->active_to) &&
+            (
+                (time() < $this->active_from) ||
+                (time() > $this->active_to)
+            )
+        ) {
+            return false;
+        }
+        // check parents
+        if ($this->depth > 0) {
+            $categories = $this->parents()->all();
+            if ($categories) {
+                foreach ($categories as $category) {
+                    if (
+                        $category->active_from && !$category->active_to && time() < $category->active_from
+                    ) {
+                        return false;
+                    } else if (
+                        !$category->active_from && $category->active_to && time() > $category->active_to
+                    ) {
+                        return false;
+                    } else if (
+                        ($category->active_from && $category->active_to) &&
+                        (
+                            (time() < $category->active_from) ||
+                            (time() > $category->active_to)
+                        )
+                    ) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * prevent error from extended page method
      *

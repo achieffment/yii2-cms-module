@@ -301,18 +301,36 @@ class Page extends \yii\db\ActiveRecord
         return $path;
     }
 
+    public function getPageCategoryActivity()
+    {
+        $category = $this->category;
+        if ($category) {
+            return $category->categoryActivity;
+        }
+        return true;
+    }
+
     public function getPageActivity()
     {
+        if (!$this->getPageCategoryActivity())
+            return false;
         if ($this->active) {
-            if ($this->active_from && !$this->active_to && time() >= $this->active_from) {
-                return true;
-            }
-            if (!$this->active_from && $this->active_to && time() <= $this->active_to) {
-                return true;
-            }
             if (
-                $this->active_from && time() >= $this->active_from &&
-                $this->active_to && time() <= $this->active_to
+                $this->active_from && !$this->active_to && time() >= $this->active_from
+            ) {
+                return true;
+            } else if (
+                !$this->active_from && $this->active_to && time() <= $this->active_to
+            ) {
+                return true;
+            } else if (
+                ($this->active_from && $this->active_to) &&
+                (time() >= $this->active_from) &&
+                (time() <= $this->active_to)
+            ) {
+                return true;
+            } else if (
+                !$this->active_from && !$this->active_to
             ) {
                 return true;
             }
