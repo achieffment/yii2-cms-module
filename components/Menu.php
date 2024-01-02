@@ -58,7 +58,7 @@ class Menu extends Component {
                     'item' => $item,
                     'items' => [],
                     'label' => $item->name,
-                    'url' => ['/' . $item->slug  . '/'],
+                    'url' => ['/category/' . $item->slug  . '/'],
                 ];
                 $menu[] = $menuItem;
             }
@@ -105,9 +105,15 @@ class Menu extends Component {
                     'OR (`active_from` IS NULL AND `active_to` IS NOT NULL AND `active_to` >= ' . time() . ') ' .
                     'OR (`active_from` IS NOT NULL AND `active_to` IS NOT NULL AND `active_from` <= ' . time() . ' AND `active_to` >= ' . time() . ')'
                 )
-                ->andWhere(['>=', 'lft', $item->lft])
-                ->andWhere(['<=', 'rgt', $item->rgt])
-                ->orderBy(['sort' => SORT_ASC])
+                ->andWhere(
+                    ['>=', 'lft', $item->lft]
+                )
+                ->andWhere(
+                    ['<=', 'rgt', $item->rgt]
+                )
+                ->orderBy(
+                    ['sort' => SORT_ASC]
+                )
                 ->all();
             if ($children) {
                 $arMenuLevel[$key]['items'] = [];
@@ -116,7 +122,7 @@ class Menu extends Component {
                         'item' => $childItem,
                         'items' => [],
                         'label' => $childItem->name,
-                        'url' => ['/' . $childItem->slug . '/']
+                        'url' => ['/category/' . $childItem->slug . '/']
                     ];
                     $arMenuLevel[$key]['items'][] = $child;
                 }

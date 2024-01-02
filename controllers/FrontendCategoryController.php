@@ -35,9 +35,26 @@ class FrontendCategoryController extends \yii\web\Controller
             $parents = $model->parents()->all();
         }
 
+        $siblings = $model->siblings;
+
+        $children = $model->getChildrenExtended();
+
+        $subCategories = [];
+        if ($parents) {
+            $subCategories[] = $parents[0];
+        }
+        if ($siblings) {
+            $subCategories = array_merge($subCategories, $siblings);
+        }
+        if ($children) {
+            $subCategories = array_merge($subCategories, $children);
+        }
+
+        $pages = $model->pages;
+
         $backPath = $this->getBackPath($model, $parents);
 
-        return $this->render('view', compact('model', 'parents', 'backPath'));
+        return $this->render('view', compact('model', 'parents', 'siblings', 'children', 'subCategories', 'pages', 'backPath'));
     }
 
     public function getBackPath($category, $parents)

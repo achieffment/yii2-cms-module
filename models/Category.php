@@ -114,7 +114,6 @@ class Category extends \chieff\modules\Cms\models\Page
                 'depth' => SORT_DESC,
             ])
             ->all();
-
         if ($query) {
             foreach ($query as $category) {
                 if ($category->isRoot()) {
@@ -152,6 +151,63 @@ class Category extends \chieff\modules\Cms\models\Page
         return $this->parents(1)->one();
     }
 
+    public function getChildrenExtended($depth = null)
+    {
+        $children = $this->children($depth)->all();
+        if ($children) {
+            foreach ($children as $key => $child) {
+                if ($child->active != self::STATUS_ACTIVE)
+                    unset($children[$key]);
+                if (
+                    $child->active_from && !$child->active_to && time() < $child->active_from
+                ) {
+                    unset($children[$key]);
+                } else if (
+                    !$child->active_from && $child->active_to && time() > $child->active_to
+                ) {
+                    unset($children[$key]);
+                } else if (
+                    ($child->active_from && $child->active_to) &&
+                    (
+                        (time() < $child->active_from) ||
+                        (time() > $child->active_to)
+                    )
+                ) {
+                    unset($children[$key]);
+                }
+            }
+            return array_values($children);
+        }
+        return $children;
+    }
+
+    public function getSiblings()
+    {
+        return self::find()
+            ->where([
+                'active' => Category::STATUS_ACTIVE,
+                'menuhide' => Category::MENU_STATUS_ACTIVE,
+                'tree' => $this->tree,
+                'depth' => $this->depth,
+            ])
+            ->andWhere(
+                '(`active_from` IS NULL AND `active_to` IS NULL) ' .
+                'OR (`active_from` IS NOT NULL AND `active_to` IS NULL AND `active_from` <= ' . time() . ') ' .
+                'OR (`active_from` IS NULL AND `active_to` IS NOT NULL AND `active_to` >= ' . time() . ') ' .
+                'OR (`active_from` IS NOT NULL AND `active_to` IS NOT NULL AND `active_from` <= ' . time() . ' AND `active_to` >= ' . time() . ')'
+            )
+            ->andWhere([
+                '>', 'lft', $this->lft
+            ])
+            ->andWhere([
+                '>', 'rgt', $this->rgt
+            ])
+            ->orderBy([
+                'sort' => SORT_ASC
+            ])
+            ->all();
+    }
+
     /**
      * Get a full tree as a list, except the node and its children
      * @param  integer $node_id node's ID
@@ -177,7 +233,7 @@ class Category extends \chieff\modules\Cms\models\Page
         return $return;
     }
 
-    public function getCategoryActivity()
+    public function getActivity()
     {
         // check cur category
         if ($this->active != self::STATUS_ACTIVE)

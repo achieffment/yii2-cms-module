@@ -311,7 +311,7 @@ class Page extends \yii\db\ActiveRecord
     {
         $category = $this->category;
         if ($category) {
-            return $category->categoryActivity;
+            return $category->activity;
         }
         return true;
     }

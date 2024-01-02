@@ -3,9 +3,9 @@ CMS module for Yii 2
 
 Creating page
 ```php
-    $modelClass = 'chieff\modules\Cms\models\Page';
-    $model = new $modelClass;
-    $model->scenario = 'page';
+$modelClass = 'chieff\modules\Cms\models\Page';
+$model = new $modelClass;
+$model->scenario = 'page';
 ```
 
 Routes
