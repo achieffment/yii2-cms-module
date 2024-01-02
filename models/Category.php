@@ -151,12 +151,12 @@ class Category extends \chieff\modules\Cms\models\Page
         return $this->parents(1)->one();
     }
 
-    public function getChildrenExtended($depth = null)
+    public function getChildrenExtended($menuhide = false, $depth = null)
     {
         $children = $this->children($depth)->all();
         if ($children) {
             foreach ($children as $key => $child) {
-                if (!$this->getModelActivity($child))
+                if (!$this->getModelActivity($menuhide, $child))
                     unset($children[$key]);
             }
             return array_values($children);
@@ -164,15 +164,18 @@ class Category extends \chieff\modules\Cms\models\Page
         return $children;
     }
 
-    public function getSiblings()
+    public function getSiblings($menuhide = false)
     {
+        $params = [
+            'active' => self::STATUS_ACTIVE,
+            'tree' => $this->tree,
+            'depth' => $this->depth,
+        ];
+        if ($menuhide) {
+            $params['menuhide'] = self::MENU_STATUS_ACTIVE;
+        }
         return self::find()
-            ->where([
-                'active' => self::STATUS_ACTIVE,
-                'menuhide' => self::MENU_STATUS_ACTIVE,
-                'tree' => $this->tree,
-                'depth' => $this->depth,
-            ])
+            ->where($params)
             ->andWhere(
                 ['<>', 'id', $this->id]
             )
@@ -223,7 +226,7 @@ class Category extends \chieff\modules\Cms\models\Page
             $parents = $this->parents()->all();
             if ($parents) {
                 foreach ($parents as $parent) {
-                    if (!$this->getModelActivity($parent))
+                    if (!$this->getModelActivity(false, $parent))
                         return false;
                 }
             }
@@ -246,12 +249,12 @@ class Category extends \chieff\modules\Cms\models\Page
         return $this->hasMany(Page::className(), ['category_id' => 'id']);
     }
 
-    public function getPagesActive()
+    public function getPagesActive($menuhide = false)
     {
         $pages = $this->pages;
         if ($pages) {
             foreach ($pages as $key => $page) {
-                if (!$this->getModelActivity($page)) {
+                if (!$this->getModelActivity($menuhide, $page)) {
                     unset($pages[$key]);
                 }
             }

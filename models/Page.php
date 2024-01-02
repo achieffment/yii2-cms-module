@@ -301,7 +301,7 @@ class Page extends \yii\db\ActiveRecord
 
         $this->detail_image = $this->imageUpload($this->id, 'detail_image', $this->detail_image);
 
-        // if hidden field is empty and current preview is equal previos, it means that we are deleting image
+        // if hidden field is empty and current detail is equal previos, it means that we are deleting image
         if (
             !$this->detail_image_hidden &&
             ($this->detail_image == $prevDetail)
@@ -353,11 +353,13 @@ class Page extends \yii\db\ActiveRecord
         return $path;
     }
 
-    public function getModelActivity($model = null)
+    public function getModelActivity($menuhide = false, $model = null)
     {
         // if giving a model
         if ($model) {
             if ($model->active != self::STATUS_ACTIVE)
+                return false;
+            if ($menuhide && $model->menuhide != self::MENU_STATUS_ACTIVE)
                 return false;
             if (
                 $model->active_from && !$model->active_to && time() < $model->active_from
@@ -381,6 +383,8 @@ class Page extends \yii\db\ActiveRecord
 
         // if not giving a model, check self
         if ($this->active != self::STATUS_ACTIVE)
+            return false;
+        if ($menuhide && $this->menuhide != self::MENU_STATUS_ACTIVE)
             return false;
         if (
             $this->active_from && !$this->active_to && time() < $this->active_from

@@ -35,9 +35,9 @@ class FrontendCategoryController extends \yii\web\Controller
             $parents = $model->parents()->all();
         }
 
-        $siblings = $model->siblings;
+        $siblings = $model->getSiblings(true);
 
-        $children = $model->getChildrenExtended();
+        $children = $model->getChildrenExtended(true);
 
         $subCategories = [];
         if ($parents) {
@@ -50,7 +50,7 @@ class FrontendCategoryController extends \yii\web\Controller
             $subCategories = array_merge($subCategories, $children);
         }
 
-        $pages = $model->pagesActive;
+        $pages = $model->getPagesActive(true);
 
         $backPath = $this->getBackPath($model, $parents);
 

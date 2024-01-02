@@ -19,5 +19,6 @@
 return [
     'Index' => 'Главная',
     'Pages' => 'Страницы',
-    'Sections' => 'Разделы'
+    'Categories' => 'Разделы',
+    'Sections' => 'Разделы',
 ];
