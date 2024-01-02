@@ -57,8 +57,8 @@ class Menu extends Component {
                 $menuItem = [
                     'item' => $item,
                     'items' => [],
-                    'label' => $item->name,
-                    'url' => ['/category/' . $item->slug  . '/'],
+                    'label' => $item->getAttributeValue('name'),
+                    'url' => ['/category/' . $item->getAttributeValue('slug')  . '/'],
                 ];
                 $menu[] = $menuItem;
             }
@@ -121,8 +121,8 @@ class Menu extends Component {
                     $child = [
                         'item' => $childItem,
                         'items' => [],
-                        'label' => $childItem->name,
-                        'url' => ['/category/' . $childItem->slug . '/']
+                        'label' => $childItem->getAttributeValue('name'),
+                        'url' => ['/category/' . $childItem->getAttributeValue('slug') . '/']
                     ];
                     $arMenuLevel[$key]['items'][] = $child;
                 }

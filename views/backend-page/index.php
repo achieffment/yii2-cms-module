@@ -115,7 +115,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             'value' => function($model) {
                                 $category = $model->category;
                                 if ($category) {
-                                    return Html::a($category->name, ['/cms/backend-category/view', 'id' => $category->id, 'categoryId' => $category->parentId], ['data-pjax' => 0]);
+                                    return Html::a($category->getAttributeValue('name'), ['/cms/backend-category/view', 'id' => $category->id, 'categoryId' => $category->parentId], ['data-pjax' => 0]);
                                 }
                             },
                             'format' => 'raw'
@@ -123,11 +123,17 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'attribute' => 'name',
                             'value' => function($model) {
-                                return Html::a($model->name . ' ' . \rmrevin\yii\fontawesome\FAS::icon('edit'), ['update', 'id' => $model->id], ['data-pjax' => 0]);
+                                return Html::a($model->getAttributeValue('name') . ' ' . \rmrevin\yii\fontawesome\FAS::icon('edit'), ['update', 'id' => $model->id], ['data-pjax' => 0]);
                             },
                             'format' => 'raw'
                         ],
-                        'slug',
+                        [
+                            'attribute' => 'slug',
+                            'value' => function($model) {
+                                return $model->getAttributeValue('slug');
+                            },
+                            'format' => 'raw'
+                        ],
                         [
                             'attribute' => 'menuhide',
                             'filter' => Html::activeDropDownList(
@@ -177,7 +183,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'attribute' => 'preview_text',
                             'value' => function($model) {
-                                if ($model->preview_text && ($text = strip_tags($model->preview_text))) {
+                                if ($model->preview_text && ($text = strip_tags($model->getAttributeValue('preview_text')))) {
                                     $tag = '<p style="width: 200px; word-wrap: break-word">';
                                     if (mb_strlen($text) > 100) {
                                         $tag .= substr($text, 0, 97) . '...';
@@ -205,7 +211,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         [
                             'attribute' => 'detail_text',
                             'value' => function($model) {
-                                if ($model->detail_text && ($text = strip_tags($model->detail_text))) {
+                                if ($model->detail_text && ($text = strip_tags($model->getAttributeValue('detail_text')))) {
                                     $tag = '<p style="width: 200px; word-wrap: break-word">';
                                     if (mb_strlen($text) > 100) {
                                         $tag .= substr($text, 0, 97) . '...';

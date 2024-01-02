@@ -5,14 +5,14 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `{{%category}}`.
  */
-class m240102_162839_create_category_table extends Migration
+class m240102_172304_create_category_encoded_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        if (\Yii::$app->getModule('cms')->dataEncodeMigration === true) {
+        if (\Yii::$app->getModule('cms')->dataEncodeMigration === false) {
             return true;
         }
         $this->createTable(\Yii::$app->getModule('cms')->category_table, array(
@@ -21,17 +21,17 @@ class m240102_162839_create_category_table extends Migration
             'active_from' => 'int default null',
             'active_to' => 'int default null',
             'sort' => 'int not null default 500',
-            'name' => 'varchar(250) not null',
-            'slug' => 'varchar(100) not null',
-            'menutitle' => 'varchar(250)',
+            'name' => 'varchar(750) not null',
+            'slug' => 'varchar(300) not null',
+            'menutitle' => 'varchar(750)',
             'menuhide' => 'tinyint not null default 0',
-            'h1' => 'varchar(250)',
-            'title' => 'varchar(250)',
-            'description' => 'varchar(500)',
+            'h1' => 'varchar(750)',
+            'title' => 'varchar(750)',
+            'description' => 'varchar(1500)',
             'preview_image' => 'varchar(100)',
-            'preview_text' => 'varchar(500)',
+            'preview_text' => 'varchar(1500)',
             'detail_image' => 'varchar(100)',
-            'detail_text' => 'varchar(5000)',
+            'detail_text' => 'text',
             'created_at' => 'int',
             'updated_at' => 'int',
             'created_by' => 'int',
@@ -48,7 +48,7 @@ class m240102_162839_create_category_table extends Migration
      */
     public function safeDown()
     {
-        if (\Yii::$app->getModule('cms')->dataEncodeMigration === true) {
+        if (\Yii::$app->getModule('cms')->dataEncodeMigration === false) {
             return true;
         }
         $this->dropTable(\Yii::$app->getModule('cms')->category_table);

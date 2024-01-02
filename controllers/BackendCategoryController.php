@@ -65,6 +65,11 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
         if ($this->scenarioOnCreate) {
             $model->scenario = $this->scenarioOnCreate;
         }
+        if (Yii::$app->getModule('cms')->dataEncode) {
+            $model->scenario = 'encodedData';
+        } else {
+            $model->scenario = 'defaultData';
+        }
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
         if ($model->load(Yii::$app->request->post())) {
@@ -108,6 +113,11 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
         if ($this->scenarioOnUpdate) {
             $model->scenario = $this->scenarioOnUpdate;
         }
+        if (Yii::$app->getModule('cms')->dataEncode) {
+            $model->scenario = 'encodedData';
+        } else {
+            $model->scenario = 'defaultData';
+        }
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
         if ($model->load(Yii::$app->request->post())) {
@@ -134,15 +144,38 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
                 }
             }
         } else {
+
+            // getting encoded values
+            $model->name = $model->getAttributeValue('name');
+            $model->slug = $model->getAttributeValue('slug');
+            $model->menutitle = $model->getAttributeValue('menutitle');
+            $model->h1 = $model->getAttributeValue('h1');
+            $model->title = $model->getAttributeValue('title');
+            $model->description = $model->getAttributeValue('description');
+            $model->preview_text = $model->getAttributeValue('preview_text');
+            $model->detail_text = $model->getAttributeValue('detail_text');
+
             $model->parent_id_field = $model->parentId;
             $model->preview_image_hidden = $model->preview_image;
             $model->detail_image_hidden = $model->detail_image;
+
         }
         return $this->renderIsAjax('update', compact('model', 'categoryId', 'backPath', 'backLink'));
     }
 
     public function actionView($id, $categoryId = null) {
         $model = $this->findModel($id);
+
+        // getting encoded values
+        $model->name = $model->getAttributeValue('name');
+        $model->slug = $model->getAttributeValue('slug');
+        $model->menutitle = $model->getAttributeValue('menutitle');
+        $model->h1 = $model->getAttributeValue('h1');
+        $model->title = $model->getAttributeValue('title');
+        $model->description = $model->getAttributeValue('description');
+        $model->preview_text = $model->getAttributeValue('preview_text');
+        $model->detail_text = $model->getAttributeValue('detail_text');
+
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
         return $this->renderIsAjax('view', compact('model', 'categoryId', 'backPath', 'backLink'));
@@ -199,19 +232,19 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
             if ($parents) {
                 foreach ($parents as $parent) {
                     $path[] = [
-                        'label' => $parent->name,
+                        'label' => $parent->getAttributeValue('name'),
                         'url' => ['index', 'categoryId' => $parent->id]
                     ];
                 }
             }
             if ($current) {
                 $path[] = [
-                    'label' => $model->name,
+                    'label' => $model->getAttributeValue('name'),
                     'url' => ['index', 'categoryId' => $model->id]
                 ];
             } else {
                 $path[] = [
-                    'label' => $model->name,
+                    'label' => $model->getAttributeValue('name'),
                 ];
             }
         } else if ($main) {

@@ -2,6 +2,7 @@
 
 namespace chieff\modules\Cms\models\search;
 
+use chieff\helpers\SecurityHelper;
 use chieff\modules\Cms\models\Page;
 
 use yii\base\Model;
@@ -47,15 +48,43 @@ class PageSearch extends Page
             return $dataProvider;
         }
 
+        if (Yii::$app->getModule('cms')->dataEncode) {
+            if ($this->name) {
+                $name = SecurityHelper::encode($this->name, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+            } else {
+                $name = '';
+            }
+            if ($this->slug) {
+                $slug = SecurityHelper::encode($this->slug, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+            } else {
+                $slug = '';
+            }
+            if ($this->preview_text) {
+                $preview_text = SecurityHelper::encode($this->preview_text, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+            } else {
+                $preview_text = '';
+            }
+            if ($this->detail_text) {
+                $detail_text = SecurityHelper::encode($this->detail_text, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+            } else {
+                $detail_text = '';
+            }
+        } else {
+            $name = $this->name;
+            $slug = $this->slug;
+            $preview_text = $this->preview_text;
+            $detail_text = $this->detail_text;
+        }
+
         $query->andFilterWhere(['active' => $this->active]);
         $query->andFilterWhere(['sort' => $this->sort]);
         $query->andFilterWhere(['category_id' => $this->category_id]);
-        $query->andFilterWhere(['like', 'name', $this->name]);
-        $query->andFilterWhere(['like', 'slug', $this->slug]);
+        $query->andFilterWhere(['like', 'name', $name]);
+        $query->andFilterWhere(['like', 'slug', $slug]);
         $query->andFilterWhere(['menuhide' => $this->menuhide]);
 
-        $query->andFilterWhere(['like', 'preview_text', $this->preview_text]);
-        $query->andFilterWhere(['like', 'detail_text', $this->detail_text]);
+        $query->andFilterWhere(['like', 'preview_text', $preview_text]);
+        $query->andFilterWhere(['like', 'detail_text', $detail_text]);
 
         if ($this->created_at) {
             $tmp = explode(' - ', $this->created_at);

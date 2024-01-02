@@ -210,8 +210,13 @@ class Category extends \chieff\modules\Cms\models\Page
         $rows = self::find()->select('id, name, depth')->where(['NOT IN', 'id', $children])->orderBy('tree, lft, sort')->all();
 
         $return = [];
-        foreach ($rows as $row)
-            $return[$row->id] = str_repeat('-', $row->depth) . ' ' . $row->name;
+        foreach ($rows as $row) {
+            if (Yii::$app->getModule('cms')->dataEncode) {
+                $return[$row->id] = str_repeat('-', $row->depth) . ' ' . $row->getAttributeValue('name');
+            } else {
+                $return[$row->id] = str_repeat('-', $row->depth) . ' ' . $row->name;
+            }
+        }
 
         return $return;
     }
@@ -235,7 +240,17 @@ class Category extends \chieff\modules\Cms\models\Page
     }
 
     /**
-     * prevent error from extended page method
+     * Prevent error from extended page method
+     *
+     * @return null
+     */
+    public function getCategoryActivity()
+    {
+        return null;
+    }
+
+    /**
+     * Prevent error from extended page method
      *
      * @return null
      */

@@ -27,5 +27,5 @@ Migrations
 
 If you want delete tables later and didn't migrate another tables, use:
 ```
-./yii migrate/down 2 --migrationPath=vendor/chieff/yii2-cms-module/migrations/
+./yii migrate/down 4 --migrationPath=vendor/chieff/yii2-cms-module/migrations/
 ```

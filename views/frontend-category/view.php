@@ -51,18 +51,18 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
             $pageImagePreview = $page->preview_image ? $page->getImage('preview_image') : null;
             $pageImageDetail  = $page->detail_image  ? $page->getImage('detail_image')  : null;
 
-            $name = $page->menutitle ? $page->menutitle : $page->name;
+            $name = $page->menutitle ? $page->getAttributeValue('menutitle') : $page->getAttributeValue('name');
             ?>
-            <div class="col-sm-12 col-md-6 col-lg-3">
+            <div class="col-sm-12 col-md-6 col-lg-3 mb-3">
                 <div class="p-3 bg-light rounded h-100">
-                    <a class="d-flex flex-column h-100" href="/page/<?= $page->slug ?>">
+                    <a class="d-flex flex-column h-100" href="/page/<?= $page->getAttributeValue('slug') ?>">
                         <? if ($pageImagePreview || $pageImageDetail): ?>
                             <img class="img-fluid mb-2" src="<?= $pageImagePreview ? $pageImagePreview : $pageImageDetail ?>" loading="lazy">
                         <? endif; ?>
                         <p class="badge badge-secondary mb-1" style="width: fit-content"><?= $pageDate ?></p>
                         <p class="mb-0"><?= $name ?></p>
                         <? if ($page->preview_text): ?>
-                            <div class="mt-1"><?= $page->preview_text ?></div>
+                            <div class="mt-1"><?= $page->getAttributeValue('preview_text') ?></div>
                         <? endif; ?>
                     </a>
                 </div>
@@ -82,7 +82,7 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
             $subCategoryImagePreview = $subCategory->preview_image ? $subCategory->getImage('preview_image') : null;
             $subCategoryImageDetail  = $subCategory->detail_image  ? $subCategory->getImage('detail_image')  : null;
 
-            $name = $subCategory->menutitle ? $subCategory->menutitle : $subCategory->name;
+            $name = $subCategory->menutitle ? $subCategory->getAttributeValue('menutitle') : $subCategory->getAttributeValue('name');
 
             $pages = $subCategory->pages;
             $pagesCount = 0;
@@ -90,16 +90,16 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
                 $pagesCount = count($pages);
             }
             ?>
-            <div class="col-sm-12 col-md-6 col-lg-3">
+            <div class="col-sm-12 col-md-6 col-lg-3 mb-3">
                 <div class="p-3 bg-light rounded h-100">
-                    <a class="d-flex flex-column h-100" href="/category/<?= $subCategory->slug ?>">
+                    <a class="d-flex flex-column h-100" href="/category/<?= $subCategory->getAttributeValue('slug') ?>">
                         <? if ($subCategoryImagePreview || $subCategoryImageDetail): ?>
                             <img class="img-fluid mb-2" src="<?= $subCategoryImagePreview ? $subCategoryImagePreview : $subCategoryImageDetail ?>" loading="lazy">
                         <? endif; ?>
                         <p class="badge badge-secondary mb-1" style="width: fit-content"><?= $subCategoryDate ?></p>
                         <p class="mb-0"><?= $name ?> (<?= $pagesCount ?>)</p>
                         <? if ($subCategory->preview_text): ?>
-                            <div class="mt-1"><?= $subCategory->preview_text ?></div>
+                            <div class="mt-1"><?= $subCategory->getAttributeValue('preview_text') ?></div>
                         <? endif; ?>
                     </a>
                 </div>

@@ -84,19 +84,27 @@ class Page extends \yii\db\ActiveRecord
             [['name', 'slug', 'menutitle', 'h1', 'title', 'description', 'preview_text', 'detail_text'], 'trim'],
             [['name', 'slug', 'active', 'menuhide'], 'required'],
             ['slug', 'unique'],
-            ['slug', 'validateSlug'],
+            ['slug', 'validateSlug', 'on' => ['defaultData', 'defaultPage']],
+            ['slug', 'validateEncodedSlug', 'on' => ['encodedData', 'encodedPage']],
             [['active', 'sort', 'menuhide', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'integer'],
-            ['category_id', 'integer', 'on' => 'page'],
-            ['category_id', 'validateCategoryId', 'on' => 'page'],
+            ['category_id', 'integer', 'on' => ['encodedPage', 'defaultPage']],
+            ['category_id', 'validateCategoryId', 'on' => ['encodedPage', 'defaultPage']],
             [['active_from', 'active_to'], 'validateDate'],
-            [['name', 'menutitle', 'h1', 'title'], 'string', 'max' => 250],
-            [['description', 'preview_text'], 'string', 'max' => 500],
-            [['slug', 'preview_image', 'detail_image', 'preview_image_hidden', 'detail_image_hidden'], 'string', 'max' => 100],
-            [['detail_text'], 'string', 'max' => 5000],
+            [['name', 'menutitle', 'h1', 'title'], 'string', 'max' => 250, 'on' => ['defaultData', 'defaultPage']],
+            [['description', 'preview_text'], 'string', 'max' => 500, 'on' => ['defaultData', 'defaultPage']],
+            ['slug', 'string', 'max' => 100, 'on' => ['defaultData', 'defaultPage']],
+            [['preview_image', 'detail_image', 'preview_image_hidden', 'detail_image_hidden'], 'string', 'max' => 100],
+            ['detail_text', 'string', 'max' => 5000, 'on' => ['defaultData', 'defaultPage']],
             ['active', 'default', 'value' => 1],
             ['sort', 'default', 'value' => 500],
             ['menuhide', 'default', 'value' => 0],
-            [['preview_image_file', 'detail_image_file'], 'file']
+            [['preview_image_file', 'detail_image_file'], 'file'],
+
+            [['name', 'menutitle', 'h1', 'title'], 'string', 'max' => 750, 'on' => ['encodedData', 'encodedPage']],
+            ['slug', 'string', 'max' => 300, 'on' => ['encodedData', 'encodedPage']],
+            [['description', 'preview_text'], 'string', 'max' => 1500, 'on' => ['encodedData', 'encodedPage']],
+            ['detail_text', 'string', 'max' => 15000, 'on' => ['encodedData', 'encodedPage']],
+            [['name', 'slug', 'menutitle', 'h1', 'title', 'description', 'preview_text', 'detail_text'], 'validateEncode', 'on' => ['encodedData', 'encodedPage']]
         ];
     }
 
@@ -141,6 +149,13 @@ class Page extends \yii\db\ActiveRecord
         }
     }
 
+    public function validateEncodedSlug()
+    {
+        if (!$this->slug || preg_match('/^[\S]+$/u', $this->slug) !== 1) {
+            $this->addError('slug', 'Incorrect slug');
+        }
+    }
+
     public function validateDate($attribute)
     {
         if ($this->$attribute && !is_numeric($this->$attribute)) {
@@ -157,6 +172,47 @@ class Page extends \yii\db\ActiveRecord
             $category = Category::findOne($this->category_id);
             if ($category === null) {
                 $this->addError('category_id', 'Incorrect category');
+            }
+        }
+    }
+
+    public function validateEncode($attribute)
+    {
+        if (
+            Yii::$app->getModule('cms')->dataEncode &&
+            ($this->$attribute != '' && $this->$attribute != null)
+        ) {
+            $value = SecurityHelper::encode($this->$attribute, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+            if (!$value) {
+                $this->addError($attribute, CmsModule::t('front', 'Can not encode field'));
+            } else {
+                $length = mb_strlen($value);
+                if (
+                    (
+                        $attribute == 'name' ||
+                        $attribute == 'menutitle' ||
+                        $attribute == 'h1' ||
+                        $attribute == 'title'
+                    ) &&
+                    ($length > 750)
+                ) {
+                    $this->addError($attribute, CmsModule::t('front', 'Max exception'));
+                } else if (
+                    ($attribute == 'slug') &&
+                    ($length > 300)
+                ) {
+                    $this->addError($attribute, CmsModule::t('front', 'Max exception'));
+                } else if (
+                    ($attribute == 'description' || $attribute == 'preview_text') &&
+                    ($length > 1500)
+                ) {
+                    $this->addError($attribute, CmsModule::t('front', 'Max exception'));
+                } else if (
+                    ($attribute == 'detail_text') &&
+                    ($length > 15000)
+                ) {
+                    $this->addError($attribute, CmsModule::t('front', 'Max exception'));
+                }
             }
         }
     }
@@ -183,6 +239,14 @@ class Page extends \yii\db\ActiveRecord
             $this->active_to = $date;
         }
 
+        if (Yii::$app->getModule('cms')->dataEncode) {
+            foreach (['name', 'slug', 'menutitle', 'h1', 'title', 'description', 'preview_text', 'detail_text'] as $attribute) {
+                if ($this->getOldAttribute($attribute) == $this->$attribute)
+                    continue;
+                $this->setAttributeValue($attribute);
+            }
+        }
+
         return parent::beforeSave($insert);
     }
 
@@ -197,6 +261,25 @@ class Page extends \yii\db\ActiveRecord
             return false;
         }
         return parent::beforeDelete();
+    }
+
+    public function getAttributeValue($attribute) {
+        if (
+            Yii::$app->getModule('cms')->dataEncode &&
+            ($this->$attribute != '' && $this->$attribute != null)
+        ) {
+            return SecurityHelper::decode($this->$attribute, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+        }
+        return $this->$attribute;
+    }
+
+    public function setAttributeValue($attribute) {
+        if (
+            Yii::$app->getModule('cms')->dataEncode &&
+            ($this->$attribute != '' && $this->$attribute != null)
+        ) {
+            $this->$attribute = SecurityHelper::encode($this->$attribute, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+        }
     }
 
     public function switchStatus()
@@ -323,7 +406,7 @@ class Page extends \yii\db\ActiveRecord
             return false;
         }
 
-        // if hidden field is empty and current preview is equal previos, it means that we are deleting image
+        // if hidden field is empty and we are not uploading, it means that we are deleting image
         if (
             !$this->preview_image_hidden &&
             !$this->preview_image_file
@@ -339,7 +422,7 @@ class Page extends \yii\db\ActiveRecord
 
         $this->detail_image = $this->imageUpload($this->id, 'detail_image', $this->detail_image);
 
-        // if hidden field is empty and current detail is equal previos, it means that we are deleting image
+        // if hidden field is empty and we are not uploading, it means that we are deleting image
         if (
             !$this->detail_image_hidden &&
             !$this->detail_image_file

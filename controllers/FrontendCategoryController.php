@@ -2,6 +2,7 @@
 
 namespace chieff\modules\Cms\controllers;
 
+use chieff\helpers\SecurityHelper;
 use chieff\modules\Cms\CmsModule;
 use chieff\modules\Cms\models\Category;
 
@@ -22,6 +23,9 @@ class FrontendCategoryController extends \yii\web\Controller
 
     public function actionView($slug)
     {
+        if (Yii::$app->getModule('cms')->dataEncode) {
+            $slug = SecurityHelper::encode($slug, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+        }
         $model = Category::findOne(['slug' => $slug]);
         if (!$model) {
             throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
@@ -29,6 +33,16 @@ class FrontendCategoryController extends \yii\web\Controller
         if (!$model->activity) {
             throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
         }
+
+        // getting encoded values
+        $model->name = $model->getAttributeValue('name');
+        $model->slug = $model->getAttributeValue('slug');
+        $model->menutitle = $model->getAttributeValue('menutitle');
+        $model->h1 = $model->getAttributeValue('h1');
+        $model->title = $model->getAttributeValue('title');
+        $model->description = $model->getAttributeValue('description');
+        $model->preview_text = $model->getAttributeValue('preview_text');
+        $model->detail_text = $model->getAttributeValue('detail_text');
 
         $parents = [];
         if ($model->depth > 0) {
@@ -63,15 +77,13 @@ class FrontendCategoryController extends \yii\web\Controller
         if ($parents) {
             foreach ($parents as $parent) {
                 $path[] = [
-                    'label' => $parent->menutitle ? $parent->menutitle : $parent->name,
-                    'url' => '/category/' . $parent->slug
-                    // 'url' => ['category', 'slug' => $parent->slug]
+                    'label' => $parent->menutitle ? $parent->getAttributeValue('menutitle') : $parent->getAttributeValue('name'),
+                    'url' => '/category/' . $parent->getAttributeValue('slug')
                 ];
             }
         }
         $path[] = [
             'label' => $category->menutitle ? $category->menutitle : $category->name,
-            // 'url' => ['index', 'slug' => $category->slug]
         ];
         return $path;
     }

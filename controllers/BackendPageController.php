@@ -2,6 +2,7 @@
 
 namespace chieff\modules\Cms\controllers;
 
+use chieff\helpers\SecurityHelper;
 use chieff\modules\Cms\CmsModule;
 
 use yii\data\ActiveDataProvider;
@@ -21,7 +22,11 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
         if ($this->scenarioOnCreate) {
             $model->scenario = $this->scenarioOnCreate;
         } else {
-            $model->scenario = 'page';
+            if (Yii::$app->getModule('cms')->dataEncode) {
+                $model->scenario = 'encodedPage';
+            } else {
+                $model->scenario = 'defaultPage';
+            }
         }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
@@ -47,7 +52,11 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
         if ($this->scenarioOnUpdate) {
             $model->scenario = $this->scenarioOnUpdate;
         } else {
-            $model->scenario = 'page';
+            if (Yii::$app->getModule('cms')->dataEncode) {
+                $model->scenario = 'encodedPage';
+            } else {
+                $model->scenario = 'defaultPage';
+            }
         }
         if ($model->load(Yii::$app->request->post())) {
             if ($model->save()) {
@@ -61,10 +70,38 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
                 }
             }
         } else {
+
+            // getting encoded values
+            $model->name = $model->getAttributeValue('name');
+            $model->slug = $model->getAttributeValue('slug');
+            $model->menutitle = $model->getAttributeValue('menutitle');
+            $model->h1 = $model->getAttributeValue('h1');
+            $model->title = $model->getAttributeValue('title');
+            $model->description = $model->getAttributeValue('description');
+            $model->preview_text = $model->getAttributeValue('preview_text');
+            $model->detail_text = $model->getAttributeValue('detail_text');
+
             $model->preview_image_hidden = $model->preview_image;
             $model->detail_image_hidden = $model->detail_image;
+
         }
         return $this->renderIsAjax('update', compact('model'));
+    }
+
+    public function actionView($id) {
+        $model = $this->findModel($id);
+
+        // getting encoded values
+        $model->name = $model->getAttributeValue('name');
+        $model->slug = $model->getAttributeValue('slug');
+        $model->menutitle = $model->getAttributeValue('menutitle');
+        $model->h1 = $model->getAttributeValue('h1');
+        $model->title = $model->getAttributeValue('title');
+        $model->description = $model->getAttributeValue('description');
+        $model->preview_text = $model->getAttributeValue('preview_text');
+        $model->detail_text = $model->getAttributeValue('detail_text');
+
+        return $this->renderIsAjax('view', compact('model'));
     }
 
     public function actionSwitchStatus($id)

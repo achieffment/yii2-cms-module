@@ -42,7 +42,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         'value' => function($model) {
                             $category = $model->category;
                             if ($category) {
-                                return Html::a($category->name, ['/cms/backend-category/view', 'id' => $category->id, 'categoryId' => $category->parentId], ['data-pjax' => 0]);
+                                return Html::a($category->getAttributeValue('name'), ['/cms/backend-category/view', 'id' => $category->id, 'categoryId' => $category->parentId], ['data-pjax' => 0]);
                             }
                         },
                         'format' => 'raw'
