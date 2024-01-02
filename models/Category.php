@@ -156,25 +156,8 @@ class Category extends \chieff\modules\Cms\models\Page
         $children = $this->children($depth)->all();
         if ($children) {
             foreach ($children as $key => $child) {
-                if ($child->active != self::STATUS_ACTIVE)
+                if (!$this->getModelActivity($child))
                     unset($children[$key]);
-                if (
-                    $child->active_from && !$child->active_to && time() < $child->active_from
-                ) {
-                    unset($children[$key]);
-                } else if (
-                    !$child->active_from && $child->active_to && time() > $child->active_to
-                ) {
-                    unset($children[$key]);
-                } else if (
-                    ($child->active_from && $child->active_to) &&
-                    (
-                        (time() < $child->active_from) ||
-                        (time() > $child->active_to)
-                    )
-                ) {
-                    unset($children[$key]);
-                }
             }
             return array_values($children);
         }
@@ -191,17 +174,14 @@ class Category extends \chieff\modules\Cms\models\Page
                 'depth' => $this->depth,
             ])
             ->andWhere(
+                ['<>', 'id', $this->id]
+            )
+            ->andWhere(
                 '(`active_from` IS NULL AND `active_to` IS NULL) ' .
                 'OR (`active_from` IS NOT NULL AND `active_to` IS NULL AND `active_from` <= ' . time() . ') ' .
                 'OR (`active_from` IS NULL AND `active_to` IS NOT NULL AND `active_to` >= ' . time() . ') ' .
                 'OR (`active_from` IS NOT NULL AND `active_to` IS NOT NULL AND `active_from` <= ' . time() . ' AND `active_to` >= ' . time() . ')'
             )
-            ->andWhere([
-                '>', 'lft', $this->lft
-            ])
-            ->andWhere([
-                '>', 'rgt', $this->rgt
-            ])
             ->orderBy([
                 'sort' => SORT_ASC
             ])
@@ -235,50 +215,16 @@ class Category extends \chieff\modules\Cms\models\Page
 
     public function getActivity()
     {
-        // check cur category
-        if ($this->active != self::STATUS_ACTIVE)
+        // check self
+        if (!$this->getModelActivity())
             return false;
-        if (
-            $this->active_from && !$this->active_to && time() < $this->active_from
-        ) {
-            return false;
-        } else if (
-            !$this->active_from && $this->active_to && time() > $this->active_to
-        ) {
-            return false;
-        } else if (
-            ($this->active_from && $this->active_to) &&
-            (
-                (time() < $this->active_from) ||
-                (time() > $this->active_to)
-            )
-        ) {
-            return false;
-        }
         // check parents
         if ($this->depth > 0) {
-            $categories = $this->parents()->all();
-            if ($categories) {
-                foreach ($categories as $category) {
-                    if ($category->active != self::STATUS_ACTIVE)
+            $parents = $this->parents()->all();
+            if ($parents) {
+                foreach ($parents as $parent) {
+                    if (!$this->getModelActivity($parent))
                         return false;
-                    if (
-                        $category->active_from && !$category->active_to && time() < $category->active_from
-                    ) {
-                        return false;
-                    } else if (
-                        !$category->active_from && $category->active_to && time() > $category->active_to
-                    ) {
-                        return false;
-                    } else if (
-                        ($category->active_from && $category->active_to) &&
-                        (
-                            (time() < $category->active_from) ||
-                            (time() > $category->active_to)
-                        )
-                    ) {
-                        return false;
-                    }
                 }
             }
         }
@@ -298,6 +244,20 @@ class Category extends \chieff\modules\Cms\models\Page
     public function getPages()
     {
         return $this->hasMany(Page::className(), ['category_id' => 'id']);
+    }
+
+    public function getPagesActive()
+    {
+        $pages = $this->pages;
+        if ($pages) {
+            foreach ($pages as $key => $page) {
+                if (!$this->getModelActivity($page)) {
+                    unset($pages[$key]);
+                }
+            }
+            return array_values($pages);
+        }
+        return $pages;
     }
 
 }

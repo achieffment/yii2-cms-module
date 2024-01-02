@@ -50,7 +50,7 @@ class FrontendCategoryController extends \yii\web\Controller
             $subCategories = array_merge($subCategories, $children);
         }
 
-        $pages = $model->pages;
+        $pages = $model->pagesActive;
 
         $backPath = $this->getBackPath($model, $parents);
 

@@ -307,7 +307,56 @@ class Page extends \yii\db\ActiveRecord
         return $path;
     }
 
-    public function getPageCategoryActivity()
+    public function getModelActivity($model = null)
+    {
+        // if giving a model
+        if ($model) {
+            if ($model->active != self::STATUS_ACTIVE)
+                return false;
+            if (
+                $model->active_from && !$model->active_to && time() < $model->active_from
+            ) {
+                return false;
+            } else if (
+                !$model->active_from && $model->active_to && time() > $model->active_to
+            ) {
+                return false;
+            } else if (
+                ($model->active_from && $model->active_to) &&
+                (
+                    (time() < $this->active_from) ||
+                    (time() > $this->active_to)
+                )
+            ) {
+                return false;
+            }
+            return true;
+        }
+
+        // if not giving a model, check self
+        if ($this->active != self::STATUS_ACTIVE)
+            return false;
+        if (
+            $this->active_from && !$this->active_to && time() < $this->active_from
+        ) {
+            return false;
+        } else if (
+            !$this->active_from && $this->active_to && time() > $this->active_to
+        ) {
+            return false;
+        } else if (
+            ($this->active_from && $this->active_to) &&
+            (
+                (time() < $this->active_from) ||
+                (time() > $this->active_to)
+            )
+        ) {
+            return false;
+        }
+        return true;
+    }
+
+    public function getCategoryActivity()
     {
         $category = $this->category;
         if ($category) {
@@ -316,32 +365,13 @@ class Page extends \yii\db\ActiveRecord
         return true;
     }
 
-    public function getPageActivity()
+    public function getActivity()
     {
-        if (!$this->getPageCategoryActivity())
+        if (!$this->getCategoryActivity())
             return false;
-        if ($this->active == self::STATUS_ACTIVE) {
-            if (
-                $this->active_from && !$this->active_to && time() >= $this->active_from
-            ) {
-                return true;
-            } else if (
-                !$this->active_from && $this->active_to && time() <= $this->active_to
-            ) {
-                return true;
-            } else if (
-                ($this->active_from && $this->active_to) &&
-                (time() >= $this->active_from) &&
-                (time() <= $this->active_to)
-            ) {
-                return true;
-            } else if (
-                !$this->active_from && !$this->active_to
-            ) {
-                return true;
-            }
-        }
-        return false;
+        if (!$this->getModelActivity())
+            return false;
+        return true;
     }
 
     public function getCategory()

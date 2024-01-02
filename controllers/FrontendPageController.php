@@ -26,7 +26,7 @@ class FrontendPageController extends \yii\web\Controller
         if (!$model) {
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
-        if (!$model->pageActivity) {
+        if (!$model->activity) {
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
 
@@ -59,7 +59,7 @@ class FrontendPageController extends \yii\web\Controller
         if ($category) {
             $path[] = [
                 'label' => $category->menutitle ? $category->menutitle : $category->name,
-                'url' => ['index', 'slug' => $category->slug]
+                'url' => '/category/' . $category->slug
             ];
         }
         $path[] = [

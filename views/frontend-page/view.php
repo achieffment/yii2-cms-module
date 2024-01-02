@@ -27,14 +27,15 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
 
 ?>
 
-<h1><?= $h1 ?></h1>
-<p class="badge badge-secondary"><?= $date ?></p>
-<? if ($model->detail_text): ?>
-    <p><?= $model->detail_text ?></p>
-<? endif; ?>
-<? if ($imageDetail): ?>
-    <img class="img-fluid mt-4 mb-4" src="<?= $imageDetail ?>" loading="lazy">
-<? endif; ?>
-<div>
-    <?= $model->detail_text ?>
+<div class="d-flex flex-column">
+    <h1><?= $h1 ?></h1>
+    <p class="badge badge-secondary" style="width: fit-content"><?= $date ?></p>
+    <? if ($imageDetail): ?>
+        <img class="img-fluid mt-4 mb-4" src="<?= $imageDetail ?>" loading="lazy">
+    <? endif; ?>
+    <? if ($model->detail_text): ?>
+        <div>
+            <?= $model->detail_text ?>
+        </div>
+    <? endif; ?>
 </div>
