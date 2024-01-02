@@ -314,7 +314,7 @@ class Page extends \yii\db\ActiveRecord
     {
         if (!$this->getPageCategoryActivity())
             return false;
-        if ($this->active) {
+        if ($this->active == self::STATUS_ACTIVE) {
             if (
                 $this->active_from && !$this->active_to && time() >= $this->active_from
             ) {

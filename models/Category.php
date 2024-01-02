@@ -180,6 +180,8 @@ class Category extends \chieff\modules\Cms\models\Page
     public function getCategoryActivity()
     {
         // check cur category
+        if ($this->active != self::STATUS_ACTIVE)
+            return false;
         if (
             $this->active_from && !$this->active_to && time() < $this->active_from
         ) {
@@ -202,6 +204,8 @@ class Category extends \chieff\modules\Cms\models\Page
             $categories = $this->parents()->all();
             if ($categories) {
                 foreach ($categories as $category) {
+                    if ($category->active != self::STATUS_ACTIVE)
+                        return false;
                     if (
                         $category->active_from && !$category->active_to && time() < $category->active_from
                     ) {
