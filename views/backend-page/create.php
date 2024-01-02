@@ -5,7 +5,6 @@ use chieff\modules\Cms\CmsModule;
 /**
  *
  * @var yii\web\View $this
- * @var yii\widgets\ActiveForm $form
  * @var chieff\modules\Cms\models\Page $model
  */
 

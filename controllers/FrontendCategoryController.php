@@ -2,6 +2,7 @@
 
 namespace chieff\modules\Cms\controllers;
 
+use chieff\modules\Cms\CmsModule;
 use chieff\modules\Cms\models\Category;
 
 use yii\web\NotFoundHttpException;
@@ -21,14 +22,43 @@ class FrontendCategoryController extends \yii\web\Controller
 
     public function actionView($slug)
     {
-        $category = Category::findOne(['slug' => $slug]);
-        if (!$category) {
+        $model = Category::findOne(['slug' => $slug]);
+        if (!$model) {
             throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
         }
-        if (!$category->categoryActivity) {
+        if (!$model->categoryActivity) {
             throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
         }
-        return $this->render('view', compact('category'));
+
+        $parents = [];
+        if ($model->depth > 0) {
+            $parents = $model->parents()->all();
+        }
+
+        $backPath = $this->getBackPath($model, $parents);
+
+        return $this->render('view', compact('model', 'parents', 'backPath'));
+    }
+
+    public function getBackPath($category, $parents)
+    {
+        $path = [
+            ['label' => CmsModule::t('back', 'Index'), 'url' => '/']
+        ];
+        if ($parents) {
+            foreach ($parents as $parent) {
+                $path[] = [
+                    'label' => $parent->menutitle ? $parent->menutitle : $parent->name,
+                    'url' => '/category/' . $parent->slug
+                    // 'url' => ['category', 'slug' => $parent->slug]
+                ];
+            }
+        }
+        $path[] = [
+            'label' => $category->menutitle ? $category->menutitle : $category->name,
+            // 'url' => ['index', 'slug' => $category->slug]
+        ];
+        return $path;
     }
 
 }

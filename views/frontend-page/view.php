@@ -1,5 +1,16 @@
 <?php
 
-?>
+use chieff\modules\Cms\CmsModule;
 
-qwe
+/**
+ *
+ * @var yii\web\View $this
+ * @var chieff\modules\Cms\models\Page $model
+ */
+
+$this->title = $model->title ? $model->title : $model->name;
+foreach ($backPath as $path) {
+    $this->params['breadcrumbs'][] = $path;
+}
+
+?>

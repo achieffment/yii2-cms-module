@@ -8,8 +8,7 @@ use yii\helpers\Html;
 /**
  *
  * @var yii\web\View $this
- * @var yii\web\View $this
- * @var chieff\modules\Cms\models\Page $model
+ * @var chieff\modules\Cms\models\Category $model
  */
 
 $this->title = $model->name;

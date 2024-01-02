@@ -2,13 +2,10 @@
 
 use chieff\modules\Cms\CmsModule;
 
-use yii\helpers\Html;
-
 /**
  *
  * @var yii\web\View $this
- * @var yii\widgets\ActiveForm $form
- * @var chieff\modules\Cms\models\Page $model
+ * @var chieff\modules\Cms\models\Category $model
  */
 
 $this->title = CmsModule::t('back', 'Category creation');

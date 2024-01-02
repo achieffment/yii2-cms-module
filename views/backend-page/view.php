@@ -8,7 +8,6 @@ use yii\helpers\Html;
 /**
  *
  * @var yii\web\View $this
- * @var yii\web\View $this
  * @var chieff\modules\Cms\models\Page $model
  */
 

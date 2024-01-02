@@ -1,7 +1,6 @@
 <?php
 
 use chieff\modules\Cms\CmsModule;
-use webvimark\modules\UserManagement\UserManagementModule;
 
 use webvimark\extensions\GridPageSize\GridPageSize;
 use webvimark\extensions\GridBulkActions\GridBulkActions;
@@ -13,7 +12,6 @@ use chieff\modules\Cms\models\Category;
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
 

@@ -11,12 +11,11 @@ use chieff\modules\Cms\models\Category;
 use yii\bootstrap4\ActiveForm;
 use yii\helpers\Html;
 
-use yii\helpers\Url;
 use Yii;
 
 /**
  * @var yii\widgets\ActiveForm $form
- * @var chieff\modules\Cms\models\Page $model
+ * @var chieff\modules\Cms\models\Category $model
  */
 ?>
 

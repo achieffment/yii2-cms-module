@@ -2,7 +2,6 @@
 
 use chieff\modules\Cms\CmsModule;
 
-use webvimark\modules\UserManagement\UserManagementModule;
 use webvimark\extensions\GridPageSize\GridPageSize;
 use webvimark\extensions\GridBulkActions\GridBulkActions;
 use webvimark\extensions\DateRangePicker\DateRangePicker;
@@ -13,7 +12,6 @@ use chieff\modules\Cms\models\Category;
 
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\helpers\ArrayHelper;
 use yii\widgets\Pjax;
 use yii\grid\GridView;
 
@@ -22,7 +20,7 @@ use Yii;
 /**
  * @var yii\web\View $this
  * @var yii\data\ActiveDataProvider $dataProvider
- * @var chieff\modules\Cms\models\search\PageSearch $searchModel
+ * @var chieff\modules\Cms\models\search\CategorySearch $searchModel
  */
 
 $this->title = CmsModule::t('back', 'Categories');
