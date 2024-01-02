@@ -2,12 +2,12 @@
 
 namespace chieff\modules\Cms\controllers;
 
-use chieff\modules\Cms\models\Page;
+use chieff\modules\Cms\models\Category;
 
 use yii\web\NotFoundHttpException;
 use Yii;
 
-class FrontendController extends \yii\web\Controller
+class FrontendPageController extends \yii\web\Controller
 {
 
     public function behaviors()
@@ -21,11 +21,11 @@ class FrontendController extends \yii\web\Controller
 
     public function actionView($slug)
     {
-        $page = Page::findOne(['slug' => $slug]);
+        $page = Category::findOne(['slug' => $slug]);
         if (!$page) {
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
-        return $this->render('view', compact('page'));
+        return $this->render('view', compact('category'));
     }
 
 }

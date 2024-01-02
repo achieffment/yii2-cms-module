@@ -2,6 +2,11 @@
 
 namespace chieff\modules\Cms;
 
+use chieff\modules\Cms\models\Category;
+use chieff\modules\Cms\models\Page;
+
+use yii\helpers\ArrayHelper;
+
 use Yii;
 
 class CmsModule extends \yii\base\Module
@@ -53,27 +58,6 @@ class CmsModule extends \yii\base\Module
             ];
         }
         return Yii::t('modules/cms/' . $category, $message, $params, $language);
-    }
-
-    public static function buildBackendMenu()
-    {
-        return
-        [
-            [
-                'label' => static::t('back', 'CMS'),
-                'url' => ['/cms/backend/'],
-                'items' => [
-                    [
-                        'label' => static::t('back', 'Pages'),
-                        'url' => ['/cms/backend-page/'],
-                    ],
-                    [
-                        'label' => static::t('back', 'Categories'),
-                        'url' => ['/cms/backend-category/']
-                    ]
-                ]
-            ]
-        ];
     }
 
 }
