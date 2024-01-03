@@ -54,11 +54,12 @@ class Menu extends Component {
             ->all();
         if ($result) {
             foreach ($result as $item) {
+                $item->decodeAttributes(['name', 'slug']);
                 $menuItem = [
                     'item' => $item,
                     'items' => [],
-                    'label' => $item->getAttributeValue('name'),
-                    'url' => ['/category/' . $item->getAttributeValue('slug')  . '/'],
+                    'label' => $item->name,
+                    'url' => ['/category/' . $item->slug  . '/'],
                 ];
                 $menu[] = $menuItem;
             }
@@ -118,11 +119,12 @@ class Menu extends Component {
             if ($children) {
                 $arMenuLevel[$key]['items'] = [];
                 foreach ($children as $childItem) {
+                    $childItem->decodeAttributes(['name', 'slug']);
                     $child = [
                         'item' => $childItem,
                         'items' => [],
-                        'label' => $childItem->getAttributeValue('name'),
-                        'url' => ['/category/' . $childItem->getAttributeValue('slug') . '/']
+                        'label' => $childItem->name,
+                        'url' => ['/category/' . $childItem->slug . '/']
                     ];
                     $arMenuLevel[$key]['items'][] = $child;
                 }

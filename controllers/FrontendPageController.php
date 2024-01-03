@@ -34,15 +34,7 @@ class FrontendPageController extends \yii\web\Controller
             throw new NotFoundHttpException(Yii::t('yii', 'Page not found.'));
         }
 
-        // getting encoded values
-        $model->name = $model->getAttributeValue('name');
-        $model->slug = $model->getAttributeValue('slug');
-        $model->menutitle = $model->getAttributeValue('menutitle');
-        $model->h1 = $model->getAttributeValue('h1');
-        $model->title = $model->getAttributeValue('title');
-        $model->description = $model->getAttributeValue('description');
-        $model->preview_text = $model->getAttributeValue('preview_text');
-        $model->detail_text = $model->getAttributeValue('detail_text');
+        $model->decodeAttributes();
 
         $category = $model->category;
 
@@ -61,16 +53,18 @@ class FrontendPageController extends \yii\web\Controller
         $path = [];
         if ($parents) {
             foreach ($parents as $parent) {
+                $parent->decodeAttributes(['menutitle', 'name', 'slug']);
                 $path[] = [
-                    'label' => $parent->menutitle ? $parent->getAttributeValue('menutitle') : $parent->getAttributeValue('slug'),
-                    'url' => '/category/' . $parent->getAttributeValue('slug')
+                    'label' => $parent->menutitle ? $parent->menutitle : $parent->name,
+                    'url' => '/category/' . $parent->slug
                 ];
             }
         }
         if ($category) {
+            $category->decodeAttributes(['menutitle', 'name', 'slug']);
             $path[] = [
-                'label' => $category->menutitle ? $category->getAttributeValue('menutitle') : $category->getAttributeValue('name'),
-                'url' => '/category/' . $category->getAttributeValue('slug')
+                'label' => $category->menutitle ? $category->menutitle : $category->name,
+                'url' => '/category/' . $category->slug
             ];
         }
         $path[] = [

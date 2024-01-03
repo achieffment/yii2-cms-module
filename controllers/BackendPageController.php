@@ -71,15 +71,7 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
             }
         } else {
 
-            // getting encoded values
-            $model->name = $model->getAttributeValue('name');
-            $model->slug = $model->getAttributeValue('slug');
-            $model->menutitle = $model->getAttributeValue('menutitle');
-            $model->h1 = $model->getAttributeValue('h1');
-            $model->title = $model->getAttributeValue('title');
-            $model->description = $model->getAttributeValue('description');
-            $model->preview_text = $model->getAttributeValue('preview_text');
-            $model->detail_text = $model->getAttributeValue('detail_text');
+            $model->decodeAttributes();
 
             $model->preview_image_hidden = $model->preview_image;
             $model->detail_image_hidden = $model->detail_image;
@@ -91,15 +83,7 @@ class BackendPageController extends \webvimark\components\AdminDefaultController
     public function actionView($id) {
         $model = $this->findModel($id);
 
-        // getting encoded values
-        $model->name = $model->getAttributeValue('name');
-        $model->slug = $model->getAttributeValue('slug');
-        $model->menutitle = $model->getAttributeValue('menutitle');
-        $model->h1 = $model->getAttributeValue('h1');
-        $model->title = $model->getAttributeValue('title');
-        $model->description = $model->getAttributeValue('description');
-        $model->preview_text = $model->getAttributeValue('preview_text');
-        $model->detail_text = $model->getAttributeValue('detail_text');
+        $model->decodeAttributes();
 
         return $this->renderIsAjax('view', compact('model'));
     }

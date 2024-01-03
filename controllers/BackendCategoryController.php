@@ -145,15 +145,7 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
             }
         } else {
 
-            // getting encoded values
-            $model->name = $model->getAttributeValue('name');
-            $model->slug = $model->getAttributeValue('slug');
-            $model->menutitle = $model->getAttributeValue('menutitle');
-            $model->h1 = $model->getAttributeValue('h1');
-            $model->title = $model->getAttributeValue('title');
-            $model->description = $model->getAttributeValue('description');
-            $model->preview_text = $model->getAttributeValue('preview_text');
-            $model->detail_text = $model->getAttributeValue('detail_text');
+            $model->decodeAttributes();
 
             $model->parent_id_field = $model->parentId;
             $model->preview_image_hidden = $model->preview_image;
@@ -166,15 +158,7 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
     public function actionView($id, $categoryId = null) {
         $model = $this->findModel($id);
 
-        // getting encoded values
-        $model->name = $model->getAttributeValue('name');
-        $model->slug = $model->getAttributeValue('slug');
-        $model->menutitle = $model->getAttributeValue('menutitle');
-        $model->h1 = $model->getAttributeValue('h1');
-        $model->title = $model->getAttributeValue('title');
-        $model->description = $model->getAttributeValue('description');
-        $model->preview_text = $model->getAttributeValue('preview_text');
-        $model->detail_text = $model->getAttributeValue('detail_text');
+        $model->decodeAttributes();
 
         $backPath = $this->getBackPath($categoryId, true, true);
         $backLink = $this->getBackLink($categoryId, true);
@@ -228,23 +212,25 @@ class BackendCategoryController extends \chieff\modules\Cms\controllers\BackendP
                 ]
             ];
             $model = $this->findModel($categoryId);
+            $model->decodeAttributes(['name']);
             $parents = $model->parents()->all();
             if ($parents) {
                 foreach ($parents as $parent) {
+                    $parent->decodeAttributes(['name']);
                     $path[] = [
-                        'label' => $parent->getAttributeValue('name'),
+                        'label' => $parent->name,
                         'url' => ['index', 'categoryId' => $parent->id]
                     ];
                 }
             }
             if ($current) {
                 $path[] = [
-                    'label' => $model->getAttributeValue('name'),
+                    'label' => $model->name,
                     'url' => ['index', 'categoryId' => $model->id]
                 ];
             } else {
                 $path[] = [
-                    'label' => $model->getAttributeValue('name'),
+                    'label' => $model->name,
                 ];
             }
         } else if ($main) {

@@ -34,15 +34,7 @@ class FrontendCategoryController extends \yii\web\Controller
             throw new NotFoundHttpException(Yii::t('yii', 'Category not found.'));
         }
 
-        // getting encoded values
-        $model->name = $model->getAttributeValue('name');
-        $model->slug = $model->getAttributeValue('slug');
-        $model->menutitle = $model->getAttributeValue('menutitle');
-        $model->h1 = $model->getAttributeValue('h1');
-        $model->title = $model->getAttributeValue('title');
-        $model->description = $model->getAttributeValue('description');
-        $model->preview_text = $model->getAttributeValue('preview_text');
-        $model->detail_text = $model->getAttributeValue('detail_text');
+        $model->decodeAttributes();
 
         $parents = [];
         if ($model->depth > 0) {
@@ -76,9 +68,10 @@ class FrontendCategoryController extends \yii\web\Controller
         $path = [];
         if ($parents) {
             foreach ($parents as $parent) {
+                $parent->decodeAttributes(['menutitle', 'name', 'slug']);
                 $path[] = [
-                    'label' => $parent->menutitle ? $parent->getAttributeValue('menutitle') : $parent->getAttributeValue('name'),
-                    'url' => '/category/' . $parent->getAttributeValue('slug')
+                    'label' => $parent->menutitle ? $parent->menutitle : $parent->name,
+                    'url' => '/category/' . $parent->slug
                 ];
             }
         }

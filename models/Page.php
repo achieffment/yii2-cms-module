@@ -56,6 +56,8 @@ class Page extends \yii\db\ActiveRecord
     public $detail_image_file;
     public $detail_image_hidden;
 
+    protected $encodedAttributes = ['name', 'slug', 'menutitle', 'h1', 'title', 'description', 'preview_text', 'detail_text'];
+
     /**
      * {@inheritdoc}
      */
@@ -240,7 +242,7 @@ class Page extends \yii\db\ActiveRecord
         }
 
         if (Yii::$app->getModule('cms')->dataEncode) {
-            foreach (['name', 'slug', 'menutitle', 'h1', 'title', 'description', 'preview_text', 'detail_text'] as $attribute) {
+            foreach ($this->encodedAttributes as $attribute) {
                 if ($this->getOldAttribute($attribute) == $this->$attribute)
                     continue;
                 $this->setAttributeValue($attribute);
@@ -280,6 +282,19 @@ class Page extends \yii\db\ActiveRecord
         ) {
             $this->$attribute = SecurityHelper::encode($this->$attribute, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
         }
+    }
+
+    public function decodeAttributes(array $attributes = []) {
+        if (!Yii::$app->getModule('cms')->dataEncode)
+            return true;
+        if (!$attributes) {
+            $attributes = $this->encodedAttributes;
+        }
+        foreach ($attributes as $attribute) {
+            if ($this->$attribute != '' && $this->$attribute != null)
+                $this->$attribute = SecurityHelper::decode($this->$attribute, 'aes-256-ctr', Yii::$app->getModule('cms')->passphrase);
+        }
+        return true;
     }
 
     public function switchStatus()

@@ -211,11 +211,8 @@ class Category extends \chieff\modules\Cms\models\Page
 
         $return = [];
         foreach ($rows as $row) {
-            if (Yii::$app->getModule('cms')->dataEncode) {
-                $return[$row->id] = str_repeat('-', $row->depth) . ' ' . $row->getAttributeValue('name');
-            } else {
-                $return[$row->id] = str_repeat('-', $row->depth) . ' ' . $row->name;
-            }
+            $row->decodeAttributes(['name']);
+            $return[$row->id] = str_repeat('-', $row->depth) . ' ' . $row->name;
         }
 
         return $return;
