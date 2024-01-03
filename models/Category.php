@@ -258,10 +258,11 @@ class Category extends \chieff\modules\Cms\models\Page
 
     public function getPages($count = false)
     {
+        $query = $this->hasMany(Page::className(), ['category_id' => 'id'])->orderBy(['sort' => SORT_ASC]);
         if ($count === true) {
-            return $this->hasMany(Page::className(), ['category_id' => 'id'])->orderBy(['sort' => SORT_ASC])->count();
+            return $query->count();
         }
-        return $this->hasMany(Page::className(), ['category_id' => 'id'])->orderBy(['sort' => SORT_ASC]);
+        return $query;
     }
 
     public function getPagesActive($menuhide = false)
