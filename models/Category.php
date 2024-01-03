@@ -2,9 +2,9 @@
 
 namespace chieff\modules\Cms\models;
 
+use chieff\modules\Cms\models\Page;
 use creocoder\nestedsets\NestedSetsBehavior;
 
-use chieff\modules\Cms\models\Page;
 use chieff\modules\Cms\components\CategoryQuery;
 
 use yii\db\Query;
@@ -256,8 +256,11 @@ class Category extends \chieff\modules\Cms\models\Page
         return null;
     }
 
-    public function getPages()
+    public function getPages($count = false)
     {
+        if ($count === true) {
+            return $this->hasMany(Page::className(), ['category_id' => 'id'])->orderBy(['sort' => SORT_ASC])->count();
+        }
         return $this->hasMany(Page::className(), ['category_id' => 'id'])->orderBy(['sort' => SORT_ASC]);
     }
 

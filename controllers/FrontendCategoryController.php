@@ -50,9 +50,15 @@ class FrontendCategoryController extends \yii\web\Controller
             $subCategories[] = $parents[0];
         }
         if ($siblings) {
+            foreach ($siblings as $sibling) {
+                $sibling->decodeAttributes(['menutitle', 'name', 'slug', 'preview_text']);
+            }
             $subCategories = array_merge($subCategories, $siblings);
         }
         if ($children) {
+            foreach ($children as $child) {
+                $child->decodeAttributes(['menutitle', 'name', 'slug', 'preview_text']);
+            }
             $subCategories = array_merge($subCategories, $children);
         }
 
@@ -68,7 +74,7 @@ class FrontendCategoryController extends \yii\web\Controller
         $path = [];
         if ($parents) {
             foreach ($parents as $parent) {
-                $parent->decodeAttributes(['menutitle', 'name', 'slug']);
+                $parent->decodeAttributes(['menutitle', 'name', 'slug', 'preview_text']);
                 $path[] = [
                     'label' => $parent->menutitle ? $parent->menutitle : $parent->name,
                     'url' => '/category/' . $parent->slug

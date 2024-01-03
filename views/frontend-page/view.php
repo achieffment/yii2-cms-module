@@ -31,7 +31,7 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
     <h1><?= $h1 ?></h1>
     <p class="badge badge-secondary" style="width: fit-content"><?= $date ?></p>
     <? if ($imageDetail): ?>
-        <img class="img-fluid mt-4 mb-4" src="<?= $imageDetail ?>" loading="lazy" style="object-fit: contain; object-position: left; max-height: 300px">
+        <img class="img-fluid mb-4" src="<?= $imageDetail ?>" loading="lazy" style="object-fit: contain; object-position: left; max-height: 300px">
     <? endif; ?>
     <? if ($model->detail_text): ?>
         <div>
