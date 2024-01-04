@@ -61,12 +61,12 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
                     ?>
                     <div class="col-sm-12 col-md-6 col-lg-4 mb-4">
                         <div class="p-3 bg-light rounded h-100">
-                            <a class="d-flex flex-column h-100" href="/page/<?= $page->slug ?>">
+                            <a class="d-flex flex-column h-100 text-dark" href="/page/<?= $page->slug ?>">
                                 <? if ($pageImagePreview || $pageImageDetail): ?>
                                     <img class="img-fluid mb-2" src="<?= $pageImagePreview ? $pageImagePreview : $pageImageDetail ?>" loading="lazy">
                                 <? endif; ?>
                                 <p class="badge badge-secondary mb-1 mt-auto" style="width: fit-content"><?= $pageDate ?></p>
-                                <p class="mb-0"><?= $name ?></p>
+                                <p class="font-weight-bold mb-0"><?= $name ?></p>
                                 <? if ($page->preview_text): ?>
                                     <div class="mt-1"><?= $page->preview_text ?></div>
                                 <? endif; ?>
@@ -97,12 +97,12 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
                     ?>
                     <div class="col-12 mb-3">
                         <div class="p-3 bg-light rounded h-100">
-                            <a class="d-flex flex-column h-100" href="/category/<?= $subCategory->slug ?>">
+                            <a class="d-flex flex-column h-100 text-dark" href="/category/<?= $subCategory->slug ?>">
                                 <? if ($subCategoryImagePreview || $subCategoryImageDetail): ?>
                                     <img class="img-fluid mb-2" src="<?= $subCategoryImagePreview ? $subCategoryImagePreview : $subCategoryImageDetail ?>" loading="lazy">
                                 <? endif; ?>
                                 <p class="badge badge-secondary mb-1 mt-auto" style="width: fit-content"><?= $subCategoryDate ?></p>
-                                <p class="mb-0"><?= $name ?> (<?= $pages ?>)</p>
+                                <p class="font-weight-bold mb-0"><?= $name ?> (<?= $pages ?>)</p>
                                 <? if ($subCategory->preview_text): ?>
                                     <div class="mt-1"><?= $subCategory->preview_text ?></div>
                                 <? endif; ?>
