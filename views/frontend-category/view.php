@@ -65,7 +65,7 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
                                 <? if ($pageImagePreview || $pageImageDetail): ?>
                                     <img class="img-fluid mb-2" src="<?= $pageImagePreview ? $pageImagePreview : $pageImageDetail ?>" loading="lazy">
                                 <? endif; ?>
-                                <p class="badge badge-secondary mb-1" style="width: fit-content"><?= $pageDate ?></p>
+                                <p class="badge badge-secondary mb-1 mt-auto" style="width: fit-content"><?= $pageDate ?></p>
                                 <p class="mb-0"><?= $name ?></p>
                                 <? if ($page->preview_text): ?>
                                     <div class="mt-1"><?= $page->preview_text ?></div>
@@ -101,7 +101,7 @@ $imageDetail  = $model->detail_image  ? $model->getImage('detail_image')  : null
                                 <? if ($subCategoryImagePreview || $subCategoryImageDetail): ?>
                                     <img class="img-fluid mb-2" src="<?= $subCategoryImagePreview ? $subCategoryImagePreview : $subCategoryImageDetail ?>" loading="lazy">
                                 <? endif; ?>
-                                <p class="badge badge-secondary mb-1" style="width: fit-content"><?= $subCategoryDate ?></p>
+                                <p class="badge badge-secondary mb-1 mt-auto" style="width: fit-content"><?= $subCategoryDate ?></p>
                                 <p class="mb-0"><?= $name ?> (<?= $pages ?>)</p>
                                 <? if ($subCategory->preview_text): ?>
                                     <div class="mt-1"><?= $subCategory->preview_text ?></div>
